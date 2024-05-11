@@ -1,0 +1,29 @@
+.{
+    .name = "darkplaces",
+    .version = "0.0.0",
+    .dependencies = .{
+        .SDL2 = .{
+            .url = "https://github.com/zig-pkg/SDL/archive/c2a99234cc3b2d0e0d5a6c95ed86f8a4fbd69c71.tar.gz",
+            .hash = "1220224d974e8a14ee5a4e3ca00e76279588f26b72b207da3586425947f9e703577a",
+        },
+        .freetype = .{
+            .url = "https://github.com/zig-pkg/freetype/archive/a1f07c5616ca4b3232c1f79b909738be0c36b7b6.tar.gz",
+            .hash = "12202f8279430ead1f5fe9a55c1c7ae1ae0ec99e9f2c51137051c61bc2cb953f3709",
+        },
+        .libvorbis = .{
+            .url = "https://github.com/zig-pkg/vorbis/archive/68f22aa15e4f349b5d16108effd9b658a2263f70.tar.gz",
+            .hash = "1220322be67ff9600142b03a37675047b61d79af342c7458d71bfb15625b92c43aba",
+        },
+        .libogg = .{
+            .url = "https://github.com/zig-pkg/ogg/archive/3aaeedd0824b8f8b2dfa64e1d2866d5b014053e0.tar.gz",
+            .hash = "1220d65fbf188012a7374a3dea472c5ec39cb297a4c0431f49db8e82821c72196a0c",
+        },
+        .zlib = .{
+            .url = "https://github.com/zig-pkg/zlib/archive/c453b28cb062b727a619684949b329f61433cc44.tar.gz",
+            .hash = "1220ba6f0f8fe189cfe4fc8cf744600609b9dc5b208c496d01d4dd594478a26ff31a",
+        },
+    },
+    .paths = .{
+        "",
+    },
+}
