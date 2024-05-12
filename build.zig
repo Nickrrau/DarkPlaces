@@ -23,6 +23,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
         .name = custom_name orelse "darkplaces",
         .target = target,
         .optimize = optimize,
+        .root_source_file = .{ .path = "main_sdl.zig" },
     });
 
     exe.addWin32ResourceFile(.{
@@ -102,6 +103,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkLibrary(zlib_dep.artifact("zlib"));
     exe.addIncludePath(zlib_dep.path(""));
 
+    exe.addIncludePath(.{ .path = "" });
     exe.addCSourceFiles(.{
         .files = &client ++ &common,
         .flags = &c_flags,
