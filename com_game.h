@@ -32,7 +32,6 @@ typedef enum gamemode_e
 	GAME_TRANSFUSION,
 	GAME_GOODVSBAD2,
 	GAME_BATTLEMECH,
-	GAME_PRYDON,
 	GAME_COUNT
 }
 gamemode_t;

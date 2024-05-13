@@ -3790,7 +3790,6 @@ static gameinfo_t gamelist[] =
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
 	{GAME_GOODVSBAD2, &goodvsbad2game, &goodvsbad2game},
 	{GAME_BATTLEMECH, &battlemechgame, &battlemechgame},
-	{GAME_PRYDON, &prydongame, &prydongame},
 };
 
 static gamelevels_t *gameoptions_levels  = NULL;
