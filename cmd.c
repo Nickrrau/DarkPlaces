@@ -685,42 +685,6 @@ static void Cmd_Exec(cmd_state_t *cmd, const char *filename)
 "csqc_polygons_defaultmaterial_nocullface 0\n"
 				);
 			break;
-		case GAME_NEXUIZ:
-			Cbuf_InsertText(cmd, "\n"
-"sv_gameplayfix_blowupfallenzombies 1\n"
-"sv_gameplayfix_findradiusdistancetobox 1\n"
-"sv_gameplayfix_grenadebouncedownslopes 1\n"
-"sv_gameplayfix_slidemoveprojectiles 1\n"
-"sv_gameplayfix_upwardvelocityclearsongroundflag 1\n"
-"sv_gameplayfix_setmodelrealbox 1\n"
-"sv_gameplayfix_droptofloorstartsolid 1\n"
-"sv_gameplayfix_droptofloorstartsolid_nudgetocorrect 1\n"
-"sv_gameplayfix_noairborncorpse 1\n"
-"sv_gameplayfix_noairborncorpse_allowsuspendeditems 1\n"
-"sv_gameplayfix_easierwaterjump 1\n"
-"sv_gameplayfix_delayprojectiles 1\n"
-"sv_gameplayfix_multiplethinksperframe 1\n"
-"sv_gameplayfix_fixedcheckwatertransition 1\n"
-"sv_gameplayfix_q1bsptracelinereportstexture 1\n"
-"sv_gameplayfix_swiminbmodels 1\n"
-"sv_gameplayfix_downtracesupportsongroundflag 1\n"
-"sys_ticrate 0.01388889\n"
-"sv_gameplayfix_q2airaccelerate 1\n"
-"sv_gameplayfix_stepmultipletimes 1\n"
-"csqc_polygons_defaultmaterial_nocullface 1\n"
-"con_chatsound_team_mask 13\n"
-				);
-			break;
-		case GAME_XONOTIC:
-		case GAME_VORETOURNAMENT:
-			// compatibility for versions prior to 2020-05-25, this can be overridden in newer versions to get the default behavior and be consistent with FTEQW engine
-			Cbuf_InsertText(cmd, "\n"
-"csqc_polygons_defaultmaterial_nocullface 1\n"
-"con_chatsound_team_mask 13\n"
-"sv_qcstats 1\n"
-"mod_q1bsp_zero_hullsize_cutoff 8.03125\n"
-				);
-			break;
 		// Steel Storm: Burning Retribution csqc misinterprets CSQC_InputEvent if type is a value other than 0 or 1
 		case GAME_STEELSTORM:
 			Cbuf_InsertText(cmd, "\n"
@@ -2222,7 +2186,7 @@ functions_done:
 
 // check cvars
 	// Xonotic is still maintained so we don't want to hide problems from getting fixed
-	if (!Cvar_Command(cmd) && (host.framecount > 0 || gamemode == GAME_XONOTIC))
+	if (!Cvar_Command(cmd) && host.framecount > 0)
 		Con_Printf(CON_WARN "Unknown command \"%s\"\n", Cmd_Argv(cmd, 0));
 done:
 	cmd->cbuf->tokenizebufferpos = oldpos;

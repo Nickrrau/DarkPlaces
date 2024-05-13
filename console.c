@@ -1804,13 +1804,7 @@ void Con_DrawNotify (void)
 	else
 		v = 0;
 
-	// GAME_NEXUIZ: center, otherwise left justify
 	align = con_notifyalign.value;
-	if(!*con_notifyalign.string) // empty string, evaluated to 0 above
-	{
-		if(IS_OLDNEXUIZ_DERIVED(gamemode))
-			align = 0.5;
-	}
 
 	if(numChatlines || !con_chatrect.integer)
 	{

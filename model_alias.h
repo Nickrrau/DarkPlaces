@@ -226,8 +226,6 @@ typedef struct aliasbone_s
 }
 aliasbone_t;
 
-#include "model_zymotic.h"
-
 #include "model_dpmodel.h"
 
 #include "model_psk.h"

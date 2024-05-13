@@ -1243,16 +1243,6 @@ static void CL_BeginDownloads(qbool aborteddownload)
 		// finished loading sounds
 	}
 
-	if(IS_NEXUIZ_DERIVED(gamemode))
-		Cvar_SetValueQuick(&cl_serverextension_download, false);
-		// in Nexuiz/Xonotic, the built in download protocol is kinda broken (misses lots
-		// of dependencies) anyway, and can mess around with the game directory;
-		// until this is fixed, only support pk3 downloads via curl, and turn off
-		// individual file downloads other than for CSQC
-		// on the other end of the download protocol, GAME_NEXUIZ/GAME_XONOTIC enforces writing
-		// to dlcache only
-		// idea: support download of pk3 files using this protocol later
-
 	// note: the reason these loops skip already-loaded things is that it
 	// enables this command to be issued during the game if desired
 
@@ -1421,7 +1411,7 @@ static void CL_StopDownload(int size, int crc)
 			// save to disk only if we don't already have it
 			// (this is mainly for playing back demos)
 			existingcrc = FS_CRCFile(cls.qw_downloadname, &existingsize);
-			if (existingsize || IS_NEXUIZ_DERIVED(gamemode) || !strcmp(cls.qw_downloadname, csqc_progname.string))
+			if (existingsize || !strcmp(cls.qw_downloadname, csqc_progname.string))
 				// let csprogs ALWAYS go to dlcache, to prevent "viral csprogs"; also, never put files outside dlcache for Nexuiz/Xonotic
 			{
 				if ((int)existingsize != size || existingcrc != crc)
@@ -2238,7 +2228,7 @@ static void CL_ParseClientdata (void)
 		cl.stats[STAT_NAILS] = MSG_ReadByte(&cl_message);
 		cl.stats[STAT_ROCKETS] = MSG_ReadByte(&cl_message);
 		cl.stats[STAT_CELLS] = MSG_ReadByte(&cl_message);
-		if (gamemode == GAME_HIPNOTIC || gamemode == GAME_ROGUE || gamemode == GAME_QUOTH || IS_OLDNEXUIZ_DERIVED(gamemode))
+		if (gamemode == GAME_HIPNOTIC || gamemode == GAME_ROGUE || gamemode == GAME_QUOTH )
 			cl.stats[STAT_ACTIVEWEAPON] = (1<<MSG_ReadByte(&cl_message));
 		else
 			cl.stats[STAT_ACTIVEWEAPON] = MSG_ReadByte(&cl_message);

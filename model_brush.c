@@ -117,11 +117,6 @@ void Mod_BrushInit(void)
 	Cvar_RegisterVariable(&mod_q1bsp_zero_hullsize_cutoff);
 	Cvar_RegisterVariable(&mod_recalculatenodeboxes);
 
-	// these games were made for older DP engines and are no longer
-	// maintained; use this hack to show their textures properly
-	if(gamemode == GAME_NEXUIZ)
-		Cvar_SetQuick(&mod_q3shader_force_addalpha, "1");
-
 	memset(&mod_q1bsp_texture_solid, 0, sizeof(mod_q1bsp_texture_solid));
 	dp_strlcpy(mod_q1bsp_texture_solid.name, "solid" , sizeof(mod_q1bsp_texture_solid.name));
 	mod_q1bsp_texture_solid.surfaceflags = 0;

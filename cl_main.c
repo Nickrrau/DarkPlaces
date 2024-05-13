@@ -186,20 +186,10 @@ void CL_ClearState(void)
 		cl.entities[i].state_current = defaultstate;
 	}
 
-	if (IS_NEXUIZ_DERIVED(gamemode))
-	{
-		VectorSet(cl.playerstandmins, -16, -16, -24);
-		VectorSet(cl.playerstandmaxs, 16, 16, 45);
-		VectorSet(cl.playercrouchmins, -16, -16, -24);
-		VectorSet(cl.playercrouchmaxs, 16, 16, 25);
-	}
-	else
-	{
-		VectorSet(cl.playerstandmins, -16, -16, -24);
-		VectorSet(cl.playerstandmaxs, 16, 16, 24);
-		VectorSet(cl.playercrouchmins, -16, -16, -24);
-		VectorSet(cl.playercrouchmaxs, 16, 16, 24);
-	}
+  VectorSet(cl.playerstandmins, -16, -16, -24);
+  VectorSet(cl.playerstandmaxs, 16, 16, 24);
+  VectorSet(cl.playercrouchmins, -16, -16, -24);
+  VectorSet(cl.playercrouchmaxs, 16, 16, 24);
 
 	// disable until we get textures for it
 	R_ResetSkyBox();
@@ -1363,10 +1353,7 @@ static void CL_UpdateNetworkEntityTrail(entity_t *e)
 	{
 		if (e->render.effects & EF_BRIGHTFIELD)
 		{
-			if (IS_NEXUIZ_DERIVED(gamemode))
-				trailtype = EFFECT_TR_NEXUIZPLASMA;
-			else
-				CL_EntityParticles(e);
+      CL_EntityParticles(e);
 		}
 		if (e->render.effects & EF_FLAME)
 			CL_ParticleTrail(EFFECT_EF_FLAME, bound(0, cl.time - cl.oldtime, 0.1), origin, origin, vec3_origin, vec3_origin, NULL, 0, false, true, NULL, NULL, 1);
@@ -1588,11 +1575,6 @@ static void CL_LinkNetworkEntity(entity_t *e)
 	// LadyHavoc: if the entity has no effects, don't check each
 	if (e->render.effects & (EF_BRIGHTFIELD | EF_DIMLIGHT | EF_BRIGHTLIGHT | EF_RED | EF_BLUE | EF_FLAME | EF_STARDUST))
 	{
-		if (e->render.effects & EF_BRIGHTFIELD)
-		{
-			if (IS_NEXUIZ_DERIVED(gamemode))
-				trailtype = EFFECT_TR_NEXUIZPLASMA;
-		}
 		if (e->render.effects & EF_DIMLIGHT)
 		{
 			dlightradius = max(dlightradius, 200);

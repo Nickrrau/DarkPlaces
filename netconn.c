@@ -2816,23 +2816,7 @@ static qbool NetConn_BuildStatusResponse(const char* challenge, char* out_msg, s
 					*p = 0;
 				}
 
-				if (IS_NEXUIZ_DERIVED(gamemode) && (teamplay.integer > 0))
-				{
-					if(client->frags == -666) // spectator
-						dp_strlcpy(teambuf, " 0", sizeof(teambuf));
-					else if(client->colors == 0x44) // red team
-						dp_strlcpy(teambuf, " 1", sizeof(teambuf));
-					else if(client->colors == 0xDD) // blue team
-						dp_strlcpy(teambuf, " 2", sizeof(teambuf));
-					else if(client->colors == 0xCC) // yellow team
-						dp_strlcpy(teambuf, " 3", sizeof(teambuf));
-					else if(client->colors == 0x99) // pink team
-						dp_strlcpy(teambuf, " 4", sizeof(teambuf));
-					else
-						dp_strlcpy(teambuf, " 0", sizeof(teambuf));
-				}
-				else
-					*teambuf = 0;
+				*teambuf = 0;
 
 				// note: team number is inserted according to SoF2 protocol
 				if(*qcstatus)

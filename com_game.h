@@ -30,13 +30,10 @@ typedef enum gamemode_e
 	GAME_ROGUE,
 	GAME_QUOTH,
 	GAME_NEHAHRA,
-	GAME_NEXUIZ,
-	GAME_XONOTIC,
 	GAME_TRANSFUSION,
 	GAME_GOODVSBAD2,
 	GAME_TEU,
 	GAME_BATTLEMECH,
-	GAME_ZYMOTIC,
 	GAME_SETHERAL,
 	GAME_TENEBRAE, // full of evil hackery
 	GAME_NEOTERIC,
@@ -57,18 +54,12 @@ typedef enum gamemode_e
 	GAME_TOMESOFMEPHISTOPHELES, // added by motorsep
 	GAME_STRAPBOMB, // added by motorsep for Urre
 	GAME_MOONHELM,
-	GAME_VORETOURNAMENT,
 	GAME_DOOMBRINGER, // added by Cloudwalk for kristus
 	GAME_BATTLEMETAL, // added by Cloudwalk for Subject9x
 	GAME_QUAKE15, // added by bones_was_here as it depends on an old bug and a workaround
 	GAME_COUNT
 }
 gamemode_t;
-
-// Master switch for some hacks/changes that eventually should become cvars.
-#define IS_NEXUIZ_DERIVED(g) ((g) == GAME_NEXUIZ || (g) == GAME_XONOTIC || (g) == GAME_VORETOURNAMENT)
-// Pre-csqcmodels era.
-#define IS_OLDNEXUIZ_DERIVED(g) ((g) == GAME_NEXUIZ || (g) == GAME_VORETOURNAMENT)
 
 extern gamemode_t gamemode;
 extern const char *gamename;
