@@ -478,9 +478,7 @@ static void SV_ServerOptions (void)
 		}
 		else
 		{
-			// default players in some games, singleplayer in most
-			if (gamemode != GAME_GOODVSBAD2 &&  gamemode != GAME_BATTLEMECH)
-				svs.maxclients = 1;
+      svs.maxclients = 1;
 		}
 	}
 

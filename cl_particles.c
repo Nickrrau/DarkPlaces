@@ -1479,11 +1479,6 @@ static void CL_ParticleEffect_Fallback(int effectnameindex, float count, const v
 						CL_NewQuakeParticle(center, color, color, 0, pos[0], pos[1], pos[2], 30*dir[1], 30*-dir[0], 0, 0, 0, 0, 0, 0.5);
 						CL_NewQuakeParticle(center, color, color, 0, pos[0], pos[1], pos[2], 30*-dir[1], 30*dir[0], 0, 0, 0, 0, 0, 0.5);
 					}
-					else if (gamemode == GAME_GOODVSBAD2)
-					{
-						dec = 6;
-						CL_NewParticle(center, pt_static, 0x00002E, 0x000030, tex_particle, 6, 0, 128, 384, 0, 0, pos[0], pos[1], pos[2], 0, 0, 0, 0, 0, 0, 0, true, 0, 1, PBLEND_ADD, PARTICLE_BILLBOARD, -1, -1, -1, 1, 1, 0, 0, NULL);
-					}
 					else
 					{
 						color = particlepalette[20 + (rand()&7)];
@@ -1511,11 +1506,6 @@ static void CL_ParticleEffect_Fallback(int effectnameindex, float count, const v
 					{
 						color = particlepalette[152 + (rand()&3)];
 						CL_NewQuakeParticle(center, color, color, 0, pos[0], pos[1], pos[2], 0, 0, 0, 0, 0, 8, 0, 0.3);
-					}
-					else if (gamemode == GAME_GOODVSBAD2)
-					{
-						dec = 6;
-						CL_NewParticle(center, pt_alphastatic, particlepalette[0 + (rand()&255)], particlepalette[0 + (rand()&255)], tex_particle, 6, 0, 255, 384, 0, 0, pos[0], pos[1], pos[2], 0, 0, 0, 0, 0, 0, 0, true, 0, 1, PBLEND_ALPHA, PARTICLE_BILLBOARD, -1, -1, -1, 1, 1, 0, 0, NULL);
 					}
 					else
 						CL_NewParticle(center, pt_static, 0x502030, 0x502030, tex_particle, 3, 0, 64, 192, 0, 0, pos[0], pos[1], pos[2], 0, 0, 0, 0, 0, 0, 0, true, 0, 1, PBLEND_ADD, PARTICLE_BILLBOARD, -1, -1, -1, 1, 1, 0, 0, NULL);
@@ -2108,7 +2098,7 @@ void CL_ParticleRain (const vec3_t mins, const vec3_t maxs, const vec3_t dir, in
 		if (!cl_particles_rain.integer) break;
 
 		count *= 4; // ick, this should be in the mod or maps?
-		particle_size = (gamemode == GAME_GOODVSBAD2) ? 20 : 0.5;
+		particle_size = 0.5;
 
 		while(count--)
 		{
@@ -2120,7 +2110,7 @@ void CL_ParticleRain (const vec3_t mins, const vec3_t maxs, const vec3_t dir, in
 	case 1:
 		if (!cl_particles_snow.integer) break;
 
-		particle_size = (gamemode == GAME_GOODVSBAD2) ? 20 : 1.0;
+		particle_size = 1.0;
 
 		while(count--)
 		{

@@ -30,8 +30,6 @@ typedef enum gamemode_e
 	GAME_ROGUE,
 	GAME_QUOTH,
 	GAME_TRANSFUSION,
-	GAME_GOODVSBAD2,
-	GAME_BATTLEMECH,
 	GAME_COUNT
 }
 gamemode_t;
