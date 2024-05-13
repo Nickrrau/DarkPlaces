@@ -1065,6 +1065,9 @@ static void M_Setup_Draw (void)
 	M_DrawTextBox (160, 32, 16, 1);
 	M_PrintColored(168, 40, setup_myname);
 
+  M_Print(64, 64, "Shirt color");
+  M_Print(64, 88, "Pants color");
+
 	M_Print(64, 124-8, "Network speed limit");
 	M_Print(168, 124, va(vabuf, sizeof(vabuf), "%i (%s)", setup_rate, setup_ratetable[setup_rateindex(setup_rate)].name));
 
@@ -3717,6 +3720,9 @@ void M_GameOptions_Draw (void)
 	M_Print(0, 128, "      Server name");
 	M_DrawTextBox (0, 132, 38, 1);
 	M_Print(8, 140, hostname.string);
+  
+  M_Print(0, 160, "         Episode");
+  M_Print(160, 160, gameoptions_levels->episodes[startepisode].description);
 
 	M_Print(0, 168, "           Level");
 	M_Print(160, 168, gameoptions_levels->levels[gameoptions_levels->episodes[startepisode].firstLevel + startlevel].description);
