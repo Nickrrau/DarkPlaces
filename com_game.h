@@ -32,19 +32,7 @@ typedef enum gamemode_e
 	GAME_TRANSFUSION,
 	GAME_GOODVSBAD2,
 	GAME_BATTLEMECH,
-	GAME_SETHERAL,
-	GAME_NEOTERIC,
 	GAME_PRYDON,
-	GAME_THEHUNTED,
-	GAME_DARSANA,
-	GAME_CONTAGIONTHEORY,
-	GAME_EDU2P,
-	GAME_PROPHECY,
-	GAME_TOMESOFMEPHISTOPHELES, // added by motorsep
-	GAME_STRAPBOMB, // added by motorsep for Urre
-	GAME_MOONHELM,
-	GAME_DOOMBRINGER, // added by Cloudwalk for kristus
-	GAME_BATTLEMETAL, // added by Cloudwalk for Subject9x
 	GAME_COUNT
 }
 gamemode_t;
