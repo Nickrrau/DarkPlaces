@@ -55,10 +55,6 @@ static void SV_Map_f(cmd_state_t *cmd)
 		return;
 	}
 
-	// GAME_DELUXEQUAKE - clear warpmark (used by QC)
-	if (gamemode == GAME_DELUXEQUAKE)
-		Cvar_Set(&cvars_all, "warpmark", "");
-
 	if(host.hook.Disconnect)
 		host.hook.Disconnect(false, NULL);
 

@@ -60,9 +60,7 @@ static const gamemode_info_t gamemode_info [GAME_COUNT] =
 { GAME_BATTLEMECH,				GAME_BATTLEMECH,			"battlemech",			"-battlemech",				"Battlemech",				"Battlemech",				"base",		NULL,			"battlemech",		"battlemech"			}, // COMMANDLINEOPTION: Game: -battlemech runs the multiplayer topdown deathmatch game BattleMech
 { GAME_SETHERAL,				GAME_SETHERAL,				"setheral",				"-setheral",				"Setheral",					"Setheral",					"data",		NULL,			"setheral",			"setheral"				}, // COMMANDLINEOPTION: Game: -setheral runs the multiplayer game Setheral
 { GAME_NEOTERIC,				GAME_NORMAL,				"neoteric",				"-neoteric",				"Neoteric",					"Neoteric",					"id1",		"neobase",		"neo",				"darkplaces"			}, // COMMANDLINEOPTION: Game: -neoteric runs the game Neoteric
-{ GAME_OPENQUARTZ,				GAME_NORMAL,				"openquartz",			"-openquartz",				"OpenQuartz",				"OpenQuartz",				"id1",		NULL,			"openquartz",		"darkplaces"			}, // COMMANDLINEOPTION: Game: -openquartz runs the game OpenQuartz, a standalone GPL replacement of the quake content
 { GAME_PRYDON,					GAME_NORMAL,				"prydon",				"-prydon",					"PrydonGate",				"PrydonGate",				"id1",		"prydon",		"prydon",			"darkplaces"			}, // COMMANDLINEOPTION: Game: -prydon runs the topdown point and click action-RPG Prydon Gate
-{ GAME_DELUXEQUAKE,				GAME_DELUXEQUAKE,			"dq",					"-dq",						"Deluxe Quake",				"Deluxe_Quake",				"basedq",	"extradq",		"basedq",			"dq"					}, // COMMANDLINEOPTION: Game: -dq runs the game Deluxe Quake
 { GAME_THEHUNTED,				GAME_THEHUNTED,				"thehunted",			"-thehunted",				"The Hunted",				"The_Hunted",				"thdata",	NULL, 			"th",				"thehunted"				}, // COMMANDLINEOPTION: Game: -thehunted runs the game The Hunted
 { GAME_DEFEATINDETAIL2,			GAME_DEFEATINDETAIL2,		"did2",					"-did2",					"Defeat In Detail 2",		"Defeat_In_Detail_2",		"data",		NULL, 			"did2_",			"did2"					}, // COMMANDLINEOPTION: Game: -did2 runs the game Defeat In Detail 2
 { GAME_DARSANA,					GAME_DARSANA,				"darsana",				"-darsana",					"Darsana",					"Darsana",					"ddata",	NULL, 			"darsana",			"darsana"				}, // COMMANDLINEOPTION: Game: -darsana runs the game Darsana
@@ -75,7 +73,6 @@ static const gamemode_info_t gamemode_info [GAME_COUNT] =
 { GAME_MOONHELM,				GAME_MOONHELM,				"moonhelm",				"-moonhelm",				"MoonHelm",					"MoonHelm",					"data",		NULL,			"mh",				"moonhelm"				}, // COMMANDLINEOPTION: Game: -moonhelm runs the game MoonHelm
 { GAME_DOOMBRINGER,				GAME_DOOMBRINGER,			"doombringer",			"-doombringer",				"DOOMBRINGER",				"DOOMBRINGER",				"dbdata",	NULL,			"doombringer",		"doombringer"			}, // COMMANDLINEOPTION: Game: -doombringer runs the game DOOMBRINGER
 { GAME_BATTLEMETAL,				GAME_NORMAL,				"battlemetal",			"-battlemetal",				"battlemetal",				"battlemetal",				"metaldata",	NULL,		"battlemetal",		"battlemetal"			}, // COMMANDLINEOPTION: Game: -battlemetal runs the game battleMETAL
-{ GAME_QUAKE15,					GAME_NORMAL,				"quake15",				"-quake15",					"Quake 1.5",				"Quake_1.5",				"id1",		"quake15",		"quake15",			"darkplaces"			}, // COMMANDLINEOPTION: Game: -quake15 runs the Quake 1.5 or Quake Combat+ mod
 };
 
 static void COM_SetGameType(int index);

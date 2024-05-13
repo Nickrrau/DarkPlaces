@@ -34,9 +34,7 @@ typedef enum gamemode_e
 	GAME_BATTLEMECH,
 	GAME_SETHERAL,
 	GAME_NEOTERIC,
-	GAME_OPENQUARTZ, //this game sucks
 	GAME_PRYDON,
-	GAME_DELUXEQUAKE,
 	GAME_THEHUNTED,
 	GAME_DEFEATINDETAIL2,
 	GAME_DARSANA,
@@ -49,7 +47,6 @@ typedef enum gamemode_e
 	GAME_MOONHELM,
 	GAME_DOOMBRINGER, // added by Cloudwalk for kristus
 	GAME_BATTLEMETAL, // added by Cloudwalk for Subject9x
-	GAME_QUAKE15, // added by bones_was_here as it depends on an old bug and a workaround
 	GAME_COUNT
 }
 gamemode_t;
