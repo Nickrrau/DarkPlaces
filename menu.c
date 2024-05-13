@@ -357,42 +357,7 @@ void M_Menu_Main_f(cmd_state_t *cmd)
 	const char *s;
 	s = "gfx/mainmenu";
 
-	if (gamemode == GAME_NEHAHRA)
-	{
-		if (FS_FileExists("maps/neh1m4.bsp"))
-		{
-			if (FS_FileExists("hearing.dem"))
-			{
-				Con_DPrint("Main menu: Nehahra movie and game detected.\n");
-				NehGameType = TYPE_BOTH;
-			}
-			else
-			{
-				Con_DPrint("Nehahra game detected.\n");
-				NehGameType = TYPE_GAME;
-			}
-		}
-		else
-		{
-			if (FS_FileExists("hearing.dem"))
-			{
-				Con_DPrint("Nehahra movie detected.\n");
-				NehGameType = TYPE_DEMO;
-			}
-			else
-			{
-				Con_DPrint("Nehahra not found.\n");
-				NehGameType = TYPE_GAME; // could just complain, but...
-			}
-		}
-		if (NehGameType == TYPE_DEMO)
-			MAIN_ITEMS = 4;
-		else if (NehGameType == TYPE_GAME)
-			MAIN_ITEMS = 5;
-		else
-			MAIN_ITEMS = 6;
-	}
-	else if (gamemode == GAME_TRANSFUSION)
+	if (gamemode == GAME_TRANSFUSION)
 	{
 		s = "gfx/menu/mainmenu1";
 		if (sv.active && !cl.intermission && cl.islocalgame)
@@ -470,18 +435,7 @@ static void M_Main_Draw (void)
 	M_DrawPic (16, 4, "gfx/qplaque");
 	p = Draw_CachePic ("gfx/ttl_main");
 	M_DrawPic ( (320-Draw_GetPicWidth(p))/2, 4, "gfx/ttl_main");
-// Nehahra
-	if (gamemode == GAME_NEHAHRA)
-	{
-		if (NehGameType == TYPE_BOTH)
-			M_DrawPic (72, 32, "gfx/mainmenu");
-		else if (NehGameType == TYPE_GAME)
-			M_DrawPic (72, 32, "gfx/gamemenu");
-		else
-			M_DrawPic (72, 32, "gfx/demomenu");
-	}
-	else
-		M_DrawPic (72, 32, "gfx/mainmenu");
+  M_DrawPic (72, 32, "gfx/mainmenu");
 
 	f = (int)(host.realtime * 10)%6;
 
@@ -532,93 +486,6 @@ static void M_Main_Key(cmd_state_t *cmd, int key, int ascii)
 				break;
 			case 1:
 				M_Menu_Quit_f(cmd);
-				break;
-			}
-		}
-		else if (gamemode == GAME_NEHAHRA)
-		{
-			switch (NehGameType)
-			{
-			case TYPE_BOTH:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_SinglePlayer_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_Demos_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 4:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 5:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
-				break;
-			case TYPE_GAME:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_SinglePlayer_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 4:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
-				break;
-			case TYPE_DEMO:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_Demos_f(cmd);
-					break;
-
-				case 1:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
 				break;
 			}
 		}
@@ -3201,7 +3068,6 @@ static int M_ChooseQuitMessage(int request)
 	case GAME_HIPNOTIC:
 	case GAME_ROGUE:
 	case GAME_QUOTH:
-	case GAME_NEHAHRA:
 	case GAME_DEFEATINDETAIL2:
 		if (request-- == 0) return M_QuitMessage("Are you gonna quit","this game just like","everything else?",NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("Milord, methinks that","thou art a lowly","quitter. Is this true?",NULL,NULL,NULL,NULL,NULL);
@@ -3937,7 +3803,6 @@ static gameinfo_t gamelist[] =
 	{GAME_HIPNOTIC, &hipnoticgame, &hipnoticgame},
 	{GAME_ROGUE, &roguegame, &roguegame},
 	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
-	{GAME_NEHAHRA, &nehahragame, &nehahragame},
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
 	{GAME_GOODVSBAD2, &goodvsbad2game, &goodvsbad2game},
 	{GAME_BATTLEMECH, &battlemechgame, &battlemechgame},

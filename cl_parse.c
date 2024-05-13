@@ -1710,9 +1710,6 @@ static void CL_ParseServerInfo (void)
 		Host_Error("CL_ParseServerInfo: Server is unrecognized protocol number (%i)", i);
 		return;
 	}
-	// hack for unmarked Nehahra movie demos which had a custom protocol
-	if (protocol == PROTOCOL_QUAKEDP && cls.demoplayback && gamemode == GAME_NEHAHRA)
-		protocol = PROTOCOL_NEHAHRAMOVIE;
 	cls.protocol = protocol;
 	Con_Printf("Server protocol is %s\n", Protocol_NameForEnum(cls.protocol));
 
@@ -3901,9 +3898,6 @@ void CL_ParseServerMessage(void)
 				protocol = Protocol_EnumForNumber(i);
 				if (protocol == PROTOCOL_UNKNOWN)
 					Host_Error("CL_ParseServerMessage: Server is unrecognized protocol number (%i)", i);
-				// hack for unmarked Nehahra movie demos which had a custom protocol
-				if (protocol == PROTOCOL_QUAKEDP && cls.demoplayback && gamemode == GAME_NEHAHRA)
-					protocol = PROTOCOL_NEHAHRAMOVIE;
 				cls.protocol = protocol;
 				break;
 
