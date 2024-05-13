@@ -3068,16 +3068,6 @@ static int M_ChooseQuitMessage(int request)
 	case GAME_HIPNOTIC:
 	case GAME_ROGUE:
 	case GAME_QUOTH:
-	case GAME_DEFEATINDETAIL2:
-		if (request-- == 0) return M_QuitMessage("Are you gonna quit","this game just like","everything else?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Milord, methinks that","thou art a lowly","quitter. Is this true?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Do I need to bust your","face open for trying","to quit?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Man, I oughta smack you","for trying to quit!","Press Y to get","smacked out.",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Press Y to quit like a","big loser in life.","Press N to stay proud","and successful!",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("If you press Y to","quit, I will summon","Satan all over your","hard drive!",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Um, Asmodeus dislikes","his children trying to","quit. Press Y to return","to your Tinkertoys.",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("If you quit now, I'll","throw a blanket-party","for you next time!",NULL,NULL,NULL,NULL,NULL);
-		break;
 	case GAME_GOODVSBAD2:
 		if (request-- == 0) return M_QuitMessage("Press Yes To Quit","...","Yes",NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("Do you really want to","Quit?","Play Good vs bad 3!",NULL,NULL,NULL,NULL,NULL);
@@ -3800,7 +3790,6 @@ static gameinfo_t gamelist[] =
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
 	{GAME_GOODVSBAD2, &goodvsbad2game, &goodvsbad2game},
 	{GAME_BATTLEMECH, &battlemechgame, &battlemechgame},
-	{GAME_DEFEATINDETAIL2, &defeatindetail2game, &defeatindetail2game},
 	{GAME_PRYDON, &prydongame, &prydongame},
 };
 

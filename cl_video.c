@@ -132,25 +132,23 @@ static void LoadSubtitles( clvideo_t *video, const char *subtitlesfile )
 	float subtime, sublen;
 	int numsubs = 0;
 
-	if (gamemode == GAME_BLOODOMNICIDE)
-	{
-		char overridename[MAX_QPATH];
-		cvar_t *langcvar;
-
-		langcvar = Cvar_FindVar(&cvars_all, "language", CF_CLIENT | CF_SERVER);
-		subtitle_text = NULL;
-		if (langcvar)
-		{
-			dpsnprintf(overridename, sizeof(overridename), "locale/%s/%s", langcvar->string, subtitlesfile);
-			subtitle_text = (char *)FS_LoadFile(overridename, cls.permanentmempool, false, NULL);
-		}
-		if (!subtitle_text)
-			subtitle_text = (char *)FS_LoadFile(subtitlesfile, cls.permanentmempool, false, NULL);
-	}
-	else
-	{
-		subtitle_text = (char *)FS_LoadFile(subtitlesfile, cls.permanentmempool, false, NULL);
-	}
+  // This is examples of localized subtitles being loaded?
+  // Save this as reference for later.
+	// {
+	// 	char overridename[MAX_QPATH];
+	// 	cvar_t *langcvar;
+	//
+	// 	langcvar = Cvar_FindVar(&cvars_all, "language", CF_CLIENT | CF_SERVER);
+	// 	subtitle_text = NULL;
+	// 	if (langcvar)
+	// 	{
+	// 		dpsnprintf(overridename, sizeof(overridename), "locale/%s/%s", langcvar->string, subtitlesfile);
+	// 		subtitle_text = (char *)FS_LoadFile(overridename, cls.permanentmempool, false, NULL);
+	// 	}
+	// 	if (!subtitle_text)
+	// 		subtitle_text = (char *)FS_LoadFile(subtitlesfile, cls.permanentmempool, false, NULL);
+	// }
+	subtitle_text = (char *)FS_LoadFile(subtitlesfile, cls.permanentmempool, false, NULL);
 	if (!subtitle_text)
 	{
 		Con_DPrintf( "LoadSubtitles: can't open subtitle file '%s'!\n", subtitlesfile );
