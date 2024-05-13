@@ -29,7 +29,6 @@ typedef enum gamemode_e
 	GAME_HIPNOTIC,
 	GAME_ROGUE,
 	GAME_QUOTH,
-	GAME_TRANSFUSION,
 	GAME_COUNT
 }
 gamemode_t;

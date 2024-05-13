@@ -357,16 +357,7 @@ void M_Menu_Main_f(cmd_state_t *cmd)
 	const char *s;
 	s = "gfx/mainmenu";
 
-	if (gamemode == GAME_TRANSFUSION)
-	{
-		s = "gfx/menu/mainmenu1";
-		if (sv.active && !cl.intermission && cl.islocalgame)
-			MAIN_ITEMS = 8;
-		else
-			MAIN_ITEMS = 7;
-	}
-	else
-		MAIN_ITEMS = 5;
+  MAIN_ITEMS = 5;
 
 	// check if the game data is missing and use a different main menu if so
 	m_missingdata = !forceqmenu.integer && !Draw_IsPicLoaded(Draw_CachePic_Flags(s, CACHEPICFLAG_FAILONMISSING));
@@ -406,28 +397,6 @@ static void M_Main_Draw (void)
 		M_Print (640/2 - 48, 480/2, "Open Console"); //The console usually better shows errors (failures)
 		M_Print (640/2 - 48, 480/2 + 8, "Quit");
 		M_DrawCharacter(640/2 - 56, 480/2 + (8 * m_main_cursor), 12+((int)(host.realtime*4)&1));
-		return;
-	}
-
-	if (gamemode == GAME_TRANSFUSION) {
-		int y1, y2, y3;
-		M_Background(640, 480);
-		p = Draw_CachePic ("gfx/menu/tb-transfusion");
-		M_DrawPic (640/2 - Draw_GetPicWidth(p)/2, 40, "gfx/menu/tb-transfusion");
-		y2 = 120;
-		// 8 rather than MAIN_ITEMS to skip a number and not miss the last option
-		for (y1 = 1; y1 <= 8; y1++)
-		{
-			if (MAIN_ITEMS == 7 && y1 == 4)
-				y1++;
-			M_DrawPic (0, y2, va(vabuf, sizeof(vabuf), "gfx/menu/mainmenu%i", y1));
-			y2 += 40;
-		}
-		if (MAIN_ITEMS == 7 && m_main_cursor > 2)
-			y3 = m_main_cursor + 2;
-		else
-			y3 = m_main_cursor + 1;
-		M_DrawPic (0, 120 + m_main_cursor * 40, va(vabuf, sizeof(vabuf), "gfx/menu/mainmenu%iselected", y3));
 		return;
 	}
 
@@ -487,78 +456,6 @@ static void M_Main_Key(cmd_state_t *cmd, int key, int ascii)
 			case 1:
 				M_Menu_Quit_f(cmd);
 				break;
-			}
-		}
-		else if (gamemode == GAME_TRANSFUSION) {
-			if (MAIN_ITEMS == 7)
-			{
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_Transfusion_Episode_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Load_f(cmd);
-					break;
-
-				case 4:
-					M_Menu_Help_f(cmd);
-					break;
-
-				case 5:
-					M_Menu_Credits_f(cmd);
-					break;
-
-				case 6:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
-			}
-			else
-			{
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_Transfusion_Episode_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Save_f(cmd);
-					break;
-
-				case 4:
-					M_Menu_Load_f(cmd);
-					break;
-
-				case 5:
-					M_Menu_Help_f(cmd);
-					break;
-
-				case 6:
-					M_Menu_Credits_f(cmd);
-					break;
-
-				case 7:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
 			}
 		}
 		else
@@ -657,12 +554,6 @@ static void M_SinglePlayer_Key(cmd_state_t *cmd, int key, int ascii)
 			Cbuf_AddText(cmd, "maxplayers 1\n");
 			Cbuf_AddText(cmd, "deathmatch 0\n");
 			Cbuf_AddText(cmd, "coop 0\n");
-			if (gamemode == GAME_TRANSFUSION)
-			{
-				key_dest = key_menu;
-				M_Menu_Transfusion_Episode_f(cmd);
-				break;
-			}
 			Cbuf_AddText(cmd, "startmap_sp\n");
 			break;
 
@@ -796,10 +687,7 @@ static void M_Load_Key(cmd_state_t *cmd, int k, int ascii)
 	switch (k)
 	{
 	case K_ESCAPE:
-		if (gamemode == GAME_TRANSFUSION)
-			M_Menu_Main_f(cmd);
-		else
-			M_Menu_SinglePlayer_f(cmd);
+    M_Menu_SinglePlayer_f(cmd);
 		break;
 
 	case K_ENTER:
@@ -838,10 +726,7 @@ static void M_Save_Key(cmd_state_t *cmd, int k, int ascii)
 	switch (k)
 	{
 	case K_ESCAPE:
-		if (gamemode == GAME_TRANSFUSION)
-			M_Menu_Main_f(cmd);
-		else
-			M_Menu_SinglePlayer_f(cmd);
+    M_Menu_SinglePlayer_f(cmd);
 		break;
 
 	case K_ENTER:
@@ -1048,16 +933,6 @@ static void M_MultiPlayer_Draw (void)
 	cachepic_t	*p;
 	char vabuf[1024];
 
-	if (gamemode == GAME_TRANSFUSION)
-	{
-		M_Background(640, 480);
-		p = Draw_CachePic ("gfx/menu/tb-online");
-		M_DrawPic (640/2 - Draw_GetPicWidth(p)/2, 140, "gfx/menu/tb-online");
-		for (f = 1; f <= MULTIPLAYER_ITEMS; f++)
-			M_DrawPic (0, 180 + f*40, va(vabuf, sizeof(vabuf), "gfx/menu/online%i", f));
-		M_DrawPic (0, 220 + m_multiplayer_cursor * 40, va(vabuf, sizeof(vabuf), "gfx/menu/online%iselected", m_multiplayer_cursor + 1));
-		return;
-	}
 	M_Background(320, 200);
 
 	M_DrawPic (16, 4, "gfx/qplaque");
@@ -2390,16 +2265,8 @@ void M_Menu_Keys_f(cmd_state_t *cmd)
 	m_state = m_keys;
 	m_entersound = true;
 
-	if (gamemode == GAME_TRANSFUSION)
-	{
-		numcommands = sizeof(transfusionbindnames) / sizeof(transfusionbindnames[0]);
-		bindnames = transfusionbindnames;
-	}
-	else
-	{
-		numcommands = sizeof(quakebindnames) / sizeof(quakebindnames[0]);
-		bindnames = quakebindnames;
-	}
+  numcommands = sizeof(quakebindnames) / sizeof(quakebindnames[0]);
+  bindnames = quakebindnames;
 
 	// Make sure "keys_cursor" doesn't start on a section in the binding list
 	keys_cursor = 0;
@@ -3731,7 +3598,6 @@ static gameinfo_t gamelist[] =
 	{GAME_HIPNOTIC, &hipnoticgame, &hipnoticgame},
 	{GAME_ROGUE, &roguegame, &roguegame},
 	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
-	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
 };
 
 static gamelevels_t *gameoptions_levels  = NULL;
@@ -3783,26 +3649,12 @@ void M_GameOptions_Draw (void)
 	M_Print(160, 56, va(vabuf, sizeof(vabuf), "%i", maxplayers) );
 
   M_Print(0, 64, "        Game Type");
-  if (gamemode == GAME_TRANSFUSION)
-  {
-    if (!coop.integer && !deathmatch.integer)
-      Cvar_SetValue(&cvars_all, "deathmatch", 1);
-    if (deathmatch.integer == 0)
-      M_Print(160, 64, "Cooperative");
-    else if (deathmatch.integer == 2)
-      M_Print(160, 64, "Capture the Flag");
-    else
-      M_Print(160, 64, "Blood Bath");
-  }
+  if (!coop.integer && !deathmatch.integer)
+    Cvar_SetValue(&cvars_all, "deathmatch", 1);
+  if (coop.integer)
+    M_Print(160, 64, "Cooperative");
   else
-  {
-    if (!coop.integer && !deathmatch.integer)
-      Cvar_SetValue(&cvars_all, "deathmatch", 1);
-    if (coop.integer)
-      M_Print(160, 64, "Cooperative");
-    else
-      M_Print(160, 64, "Deathmatch");
-  }
+    M_Print(160, 64, "Deathmatch");
 
   M_Print(0, 72, "        Teamplay");
   if (gamemode == GAME_ROGUE)
@@ -3833,31 +3685,17 @@ void M_GameOptions_Draw (void)
     }
     M_Print(160, 72, msg);
   }
+
   M_Print(0, 80, "            Skill");
-  if (gamemode == GAME_TRANSFUSION)
-  {
-    if (skill.integer == 1)
-      M_Print(160, 80, "Still Kicking");
-    else if (skill.integer == 2)
-      M_Print(160, 80, "Pink On The Inside");
-    else if (skill.integer == 3)
-      M_Print(160, 80, "Lightly Broiled");
-    else if (skill.integer == 4)
-      M_Print(160, 80, "Well Done");
-    else
-      M_Print(160, 80, "Extra Crispy");
-  }
+  if (skill.integer == 0)
+    M_Print(160, 80, "Easy difficulty");
+  else if (skill.integer == 1)
+    M_Print(160, 80, "Normal difficulty");
+  else if (skill.integer == 2)
+    M_Print(160, 80, "Hard difficulty");
   else
-  {
-    if (skill.integer == 0)
-      M_Print(160, 80, "Easy difficulty");
-    else if (skill.integer == 1)
-      M_Print(160, 80, "Normal difficulty");
-    else if (skill.integer == 2)
-      M_Print(160, 80, "Hard difficulty");
-    else
-      M_Print(160, 80, "Nightmare difficulty");
-  }
+    M_Print(160, 80, "Nightmare difficulty");
+
   M_Print(0, 88, "       Frag Limit");
   if (fraglimit.integer == 0)
     M_Print(160, 88, "none");
@@ -3927,42 +3765,16 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 2:
-		if (gamemode == GAME_TRANSFUSION)
-		{
-			switch (deathmatch.integer)
-			{
-				// From Cooperative to BloodBath
-				case 0:
-					Cvar_SetValueQuick (&coop, 0);
-					Cvar_SetValueQuick (&deathmatch, 1);
-					break;
-
-				// From BloodBath to CTF
-				case 1:
-					Cvar_SetValueQuick (&coop, 0);
-					Cvar_SetValueQuick (&deathmatch, 2);
-					break;
-
-				// From CTF to Cooperative
-				//case 2:
-				default:
-					Cvar_SetValueQuick (&coop, 1);
-					Cvar_SetValueQuick (&deathmatch, 0);
-			}
-		}
-		else
-		{
-			if (deathmatch.integer) // changing from deathmatch to coop
-			{
-				Cvar_SetValueQuick (&coop, 1);
-				Cvar_SetValueQuick (&deathmatch, 0);
-			}
-			else // changing from coop to deathmatch
-			{
-				Cvar_SetValueQuick (&coop, 0);
-				Cvar_SetValueQuick (&deathmatch, 1);
-			}
-		}
+    if (deathmatch.integer) // changing from deathmatch to coop
+    {
+      Cvar_SetValueQuick (&coop, 1);
+      Cvar_SetValueQuick (&deathmatch, 0);
+    }
+    else // changing from coop to deathmatch
+    {
+      Cvar_SetValueQuick (&coop, 0);
+      Cvar_SetValueQuick (&deathmatch, 1);
+    }
 		break;
 
 	case 3:
@@ -3980,20 +3792,10 @@ static void M_NetStart_Change (int dir)
 
 	case 4:
 		Cvar_SetValueQuick (&skill, skill.integer + dir);
-		if (gamemode == GAME_TRANSFUSION)
-		{
-			if (skill.integer > 5)
-				Cvar_SetValueQuick (&skill, 1);
-			if (skill.integer < 1)
-				Cvar_SetValueQuick (&skill, 5);
-		}
-		else
-		{
-			if (skill.integer > 3)
-				Cvar_SetValueQuick (&skill, 0);
-			if (skill.integer < 0)
-				Cvar_SetValueQuick (&skill, 3);
-		}
+    if (skill.integer > 3)
+      Cvar_SetValueQuick (&skill, 0);
+    if (skill.integer < 0)
+      Cvar_SetValueQuick (&skill, 3);
 		break;
 
 	case 5:
@@ -4162,11 +3964,7 @@ static void M_ServerList_Draw (void)
 	const char *s;
 	char vabuf[1024];
 
-	// use as much vertical space as available
-	if (gamemode == GAME_TRANSFUSION)
-		M_Background(640, vid_conheight.integer - 80);
-	else
-		M_Background(640, vid_conheight.integer);
+  M_Background(640, vid_conheight.integer);
 	// scroll the list as the cursor moves
 	ServerList_GetPlayerStatistics(&statnumplayers, &statmaxplayers);
 	s = va(vabuf, sizeof(vabuf), "%u/%u masters %u/%u servers %u/%u players", masterreplycount, masterquerycount, serverreplycount, serverquerycount, statnumplayers, statmaxplayers);
@@ -4392,11 +4190,7 @@ static void M_ModList_Draw (void)
 	const char *s_available = "Available Mods";
 	const char *s_enabled = "Enabled Mods";
 
-	// use as much vertical space as available
-	if (gamemode == GAME_TRANSFUSION)
-		M_Background(640, vid_conheight.integer - 80);
-	else
-		M_Background(640, vid_conheight.integer);
+  M_Background(640, vid_conheight.integer);
 
 	M_PrintRed(48 + 32, 32, s_available);
 	M_PrintRed(432, 32, s_enabled);
@@ -4623,38 +4417,6 @@ void M_Draw (void)
 	case m_modlist:
 		M_ModList_Draw ();
 		break;
-	}
-
-	if (gamemode == GAME_TRANSFUSION && !m_missingdata) {
-		if (m_state != m_credits) {
-			cachepic_t	*p, *drop1, *drop2, *drop3;
-			int g, scale_x, scale_y, scale_y_repeat, top_offset;
-			float scale_y_rate;
-			scale_y_repeat = vid_conheight.integer * 2;
-			g = (int)(host.realtime * 64)%96;
-			scale_y_rate = (float)(g+1) / 96;
-			top_offset = (g+12)/12;
-			p = Draw_CachePic (va(vabuf, sizeof(vabuf), "gfx/menu/blooddrip%i", top_offset));
-			drop1 = Draw_CachePic ("gfx/menu/blooddrop1");
-			drop2 = Draw_CachePic ("gfx/menu/blooddrop2");
-			drop3 = Draw_CachePic ("gfx/menu/blooddrop3");
-			for (scale_x = 0; scale_x <= vid_conwidth.integer; scale_x += Draw_GetPicWidth(p)) {
-				for (scale_y = -scale_y_repeat; scale_y <= vid_conheight.integer; scale_y += scale_y_repeat) {
-					DrawQ_Pic (scale_x + 21, scale_y_repeat * .5 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x +  116, scale_y_repeat + scale_y + scale_y_rate * scale_y_repeat, drop1, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 180, scale_y_repeat * .275 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 242, scale_y_repeat * .75 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 304, scale_y_repeat * .25 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 362, scale_y_repeat * .46125 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 402, scale_y_repeat * .1725 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 438, scale_y_repeat * .9 + scale_y + scale_y_rate * scale_y_repeat, drop1, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 484, scale_y_repeat * .5 + scale_y + scale_y_rate * scale_y_repeat, drop3, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 557, scale_y_repeat * .9425 + scale_y + scale_y_rate * scale_y_repeat, drop1, 0, 0, 1, 1, 1, 1, 0);
-					DrawQ_Pic (scale_x + 606, scale_y_repeat * .5 + scale_y + scale_y_rate * scale_y_repeat, drop2, 0, 0, 1, 1, 1, 1, 0);
-				}
-				DrawQ_Pic (scale_x, -1, Draw_CachePic (va(vabuf, sizeof(vabuf), "gfx/menu/blooddrip%i", top_offset)), 0, 0, 1, 1, 1, 1, 0);
-			}
-		}
 	}
 
 	if (m_entersound)
