@@ -32,10 +32,8 @@ typedef enum gamemode_e
 	GAME_NEHAHRA,
 	GAME_TRANSFUSION,
 	GAME_GOODVSBAD2,
-	GAME_TEU,
 	GAME_BATTLEMECH,
 	GAME_SETHERAL,
-	GAME_TENEBRAE, // full of evil hackery
 	GAME_NEOTERIC,
 	GAME_OPENQUARTZ, //this game sucks
 	GAME_PRYDON,

@@ -446,26 +446,6 @@ static qbool SV_PrepareEntityForSending (prvm_edict_t *ent, entity_state_t *cs, 
 	lightstyle = (unsigned char)PRVM_serveredictfloat(ent, style);
 	lightpflags = (unsigned char)PRVM_serveredictfloat(ent, pflags);
 
-	if (gamemode == GAME_TENEBRAE)
-	{
-		// tenebrae's EF_FULLDYNAMIC conflicts with Q2's EF_NODRAW
-		if (effects & 16)
-		{
-			effects &= ~16;
-			lightpflags |= PFLAGS_FULLDYNAMIC;
-		}
-		// tenebrae's EF_GREEN conflicts with DP's EF_ADDITIVE
-		if (effects & 32)
-		{
-			effects &= ~32;
-			light[0] = (int)(0.2*256);
-			light[1] = (int)(1.0*256);
-			light[2] = (int)(0.2*256);
-			light[3] = 200;
-			lightpflags |= PFLAGS_FULLDYNAMIC;
-		}
-	}
-
 	specialvisibilityradius = 0;
 	if (lightpflags & PFLAGS_FULLDYNAMIC)
 		specialvisibilityradius = max(specialvisibilityradius, light[3]);

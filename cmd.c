@@ -660,31 +660,6 @@ static void Cmd_Exec(cmd_state_t *cmd, const char *filename)
 "csqc_polygons_defaultmaterial_nocullface 0\n"
 				);
 			break;
-		case GAME_TENEBRAE:
-			Cbuf_InsertText(cmd, "\n"
-"sv_gameplayfix_blowupfallenzombies 0\n"
-"sv_gameplayfix_findradiusdistancetobox 0\n"
-"sv_gameplayfix_grenadebouncedownslopes 0\n"
-"sv_gameplayfix_slidemoveprojectiles 0\n"
-"sv_gameplayfix_upwardvelocityclearsongroundflag 0\n"
-"sv_gameplayfix_setmodelrealbox 0\n"
-"sv_gameplayfix_droptofloorstartsolid 0\n"
-"sv_gameplayfix_droptofloorstartsolid_nudgetocorrect 0\n"
-"sv_gameplayfix_noairborncorpse 0\n"
-"sv_gameplayfix_noairborncorpse_allowsuspendeditems 0\n"
-"sv_gameplayfix_easierwaterjump 0\n"
-"sv_gameplayfix_delayprojectiles 0\n"
-"sv_gameplayfix_multiplethinksperframe 0\n"
-"sv_gameplayfix_fixedcheckwatertransition 0\n"
-"sv_gameplayfix_q1bsptracelinereportstexture 0\n"
-"sv_gameplayfix_swiminbmodels 0\n"
-"sv_gameplayfix_downtracesupportsongroundflag 0\n"
-"sys_ticrate 0.01388889\n"
-"r_shadow_gloss 2\n"
-"r_shadow_bumpscale_basetexture 4\n"
-"csqc_polygons_defaultmaterial_nocullface 0\n"
-				);
-			break;
 		// Steel Storm: Burning Retribution csqc misinterprets CSQC_InputEvent if type is a value other than 0 or 1
 		case GAME_STEELSTORM:
 			Cbuf_InsertText(cmd, "\n"

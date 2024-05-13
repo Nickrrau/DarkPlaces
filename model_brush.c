@@ -1884,9 +1884,9 @@ static void Mod_Q1BSP_LoadTextures(sizebuf_t *sb)
 
 		if (cls.state != ca_dedicated)
 		{
-			skinframe_t *skinframe = R_SkinFrame_LoadExternal(gamemode == GAME_TENEBRAE ? tx->name : va(vabuf, sizeof(vabuf), "textures/%s/%s", mapname, tx->name), TEXF_ALPHA | TEXF_MIPMAP | TEXF_ISWORLD | TEXF_PICMIP | TEXF_COMPRESS, false, false);
+			skinframe_t *skinframe = R_SkinFrame_LoadExternal( va(vabuf, sizeof(vabuf), "textures/%s/%s", mapname, tx->name), TEXF_ALPHA | TEXF_MIPMAP | TEXF_ISWORLD | TEXF_PICMIP | TEXF_COMPRESS, false, false);
 			if ((!skinframe &&
-			    !(skinframe = R_SkinFrame_LoadExternal(gamemode == GAME_TENEBRAE ? tx->name : va(vabuf, sizeof(vabuf), "textures/%s", tx->name), TEXF_ALPHA | TEXF_MIPMAP | TEXF_ISWORLD | TEXF_PICMIP | TEXF_COMPRESS, false, false)))
+			    !(skinframe = R_SkinFrame_LoadExternal(va(vabuf, sizeof(vabuf), "textures/%s", tx->name), TEXF_ALPHA | TEXF_MIPMAP | TEXF_ISWORLD | TEXF_PICMIP | TEXF_COMPRESS, false, false)))
 				// HACK: It loads custom skybox textures as a wall if loaded as a skinframe.
 				|| !strncmp(tx->name, "sky", 3))
 			{
@@ -1911,9 +1911,9 @@ static void Mod_Q1BSP_LoadTextures(sizebuf_t *sb)
 				}
 				else if (!strncmp(tx->name, "sky", 3) && mtwidth == mtheight * 2)
 				{
-					data = loadimagepixelsbgra(gamemode == GAME_TENEBRAE ? tx->name : va(vabuf, sizeof(vabuf), "textures/%s/%s", mapname, tx->name), false, false, false, NULL);
+					data = loadimagepixelsbgra(va(vabuf, sizeof(vabuf), "textures/%s/%s", mapname, tx->name), false, false, false, NULL);
 					if (!data)
-						data = loadimagepixelsbgra(gamemode == GAME_TENEBRAE ? tx->name : va(vabuf, sizeof(vabuf), "textures/%s", tx->name), false, false, false, NULL);
+						data = loadimagepixelsbgra(va(vabuf, sizeof(vabuf), "textures/%s", tx->name), false, false, false, NULL);
 					if (data && image_width == image_height * 2)
 					{
 						Mod_Q1BSP_LoadSplitSky(data, image_width, image_height, 4);
