@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern const char *buildstring;
 extern char engineversion[128];
+extern const char *os_name;
+extern const char *os_arch;
 
 #ifdef __APPLE__
 # include <TargetConditionals.h>

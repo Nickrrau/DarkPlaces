@@ -24,6 +24,14 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     });
     test_lib.bundle_compiler_rt = true;
 
+    const build_info = b.addStaticLibrary(.{
+        .name = "build_info",
+        .target = target,
+        .optimize = optimize,
+        .root_source_file = .{ .path = "build_info.zig" },
+    });
+    build_info.bundle_compiler_rt = true;
+
     const exe = b.addExecutable(.{
         .name = "darkplaces",
         .target = target,
@@ -62,6 +70,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.subsystem = .Windows;
 
     exe.linkLibrary(test_lib);
+    exe.linkLibrary(build_info);
 
     const sdl_dep = b.dependency("SDL2", .{
         .optimize = optimize,

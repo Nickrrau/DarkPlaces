@@ -459,6 +459,10 @@ void Host_Init (void)
 	// initialize filesystem (including fs_basedir, fs_gamedir, -game, scr_screenshot_name, gamename)
 	FS_Init();
 
+	// ASAP! construct a version string for the corner of the console and for crash messages
+	dpsnprintf (engineversion, sizeof (engineversion), "%s %s%s, buildstring: %s", gamename, os_name, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
+	Con_Printf("%s\n", engineversion);
+
 	// initialize process nice level
 	Sys_InitProcessNice();
 
