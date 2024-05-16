@@ -449,7 +449,7 @@ static void Host_Init (void)
 	FS_Init();
 
 	// ASAP! construct a version string for the corner of the console and for crash messages
-	dpsnprintf (engineversion, sizeof (engineversion), "%s %s%s, buildstring: %s", gamename, DP_OS_NAME, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
+	dpsnprintf (engineversion, sizeof (engineversion), "%s %s%s, buildstring: %s", gamename, os_name, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
 	Con_Printf("%s\n", engineversion);
 
 	// initialize process nice level

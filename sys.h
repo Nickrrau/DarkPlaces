@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     DP_ARCH_STR	- "identifier" of the processor architecture
  */
 #if defined(__ANDROID__) /* must come first because it also defines linux */
-# define DP_OS_NAME		"Android"
-# define DP_OS_STR		"android"
 # define USE_GLES2		1
 # define USE_RWOPS		1
 # define LINK_TO_ZLIB	1
@@ -43,58 +41,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # define DP_MOBILETOUCH	1
 # define DP_FREETYPE_STATIC 1
 #elif defined(__linux__)
-# define DP_OS_NAME		"Linux"
-# define DP_OS_STR		"linux"
 #elif defined(_WIN64)
-# define DP_OS_NAME		"Windows64"
-# define DP_OS_STR		"win64"
 #elif defined(WIN32)
-# define DP_OS_NAME		"Windows"
-# define DP_OS_STR		"win32"
 #elif defined(__FreeBSD__)
-# define DP_OS_NAME		"FreeBSD"
-# define DP_OS_STR		"freebsd"
 #elif defined(__NetBSD__)
-# define DP_OS_NAME		"NetBSD"
-# define DP_OS_STR		"netbsd"
 #elif defined(__OpenBSD__)
-# define DP_OS_NAME		"OpenBSD"
-# define DP_OS_STR		"openbsd"
 #elif defined(__DragonFly__)
-# define DP_OS_NAME		"DragonFlyBSD"
-# define DP_OS_STR		"dragonflybsd"
 #elif defined(__APPLE__)
 # if TARGET_OS_IPHONE
-#  define DP_OS_NAME "iOS"
-#  define DP_OS_STR "ios"
 #  define USE_GLES2              1
 #  define LINK_TO_ZLIB   1
 #  define LINK_TO_LIBVORBIS 1
 #  define DP_MOBILETOUCH 1
 #  define DP_FREETYPE_STATIC 1
 # elif TARGET_OS_MAC
-#  define DP_OS_NAME "macOS"
-#  define DP_OS_STR "macos"
 # endif 
 #elif defined(__MORPHOS__)
-# define DP_OS_NAME		"MorphOS"
-# define DP_OS_STR		"morphos"
 #elif defined (sun) || defined (__sun)
 # if defined (__SVR4) || defined (__svr4__)
-#  define DP_OS_NAME	"Solaris"
-#  define DP_OS_STR		"solaris"
 # else
-#  define DP_OS_NAME	"SunOS"
-#  define DP_OS_STR		"sunos"
 # endif
 #else
-# define DP_OS_NAME		"Unknown"
-# define DP_OS_STR		"unknown"
 #endif
 
 #if defined(__GNUC__) || (__clang__)
 # if defined(__i386__)
-#  define DP_ARCH_STR		"686"
 #  define SSE_POSSIBLE
 #  ifdef __SSE__
 #   define SSE_PRESENT
@@ -103,18 +74,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #   define SSE2_PRESENT
 #  endif
 # elif defined(__x86_64__)
-#  define DP_ARCH_STR		"x86_64"
 #  define SSE_PRESENT
 #  define SSE2_PRESENT
 # elif defined(__powerpc__)
-#  define DP_ARCH_STR		"ppc"
 # endif
 #elif defined(_WIN64)
-# define DP_ARCH_STR		"x86_64"
 # define SSE_PRESENT
 # define SSE2_PRESENT
 #elif defined(WIN32)
-# define DP_ARCH_STR		"x86"
 # define SSE_POSSIBLE
 #endif
 
