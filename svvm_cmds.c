@@ -490,9 +490,6 @@ static void VM_SV_ambientsound(prvm_prog_t *prog)
 	if (soundnum >= 256)
 		large = true;
 
-	if(sv.protocol == PROTOCOL_NEHAHRABJP)
-		large = false;
-
 	// add an svc_spawnambient command to the level signon packet
 
 	if (large)
@@ -502,7 +499,7 @@ static void VM_SV_ambientsound(prvm_prog_t *prog)
 
 	MSG_WriteVector(&sv.signon, pos, sv.protocol);
 
-	if (large || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
+	if (large)
 		MSG_WriteShort (&sv.signon, soundnum);
 	else
 		MSG_WriteByte (&sv.signon, soundnum);
@@ -1620,13 +1617,7 @@ static void VM_SV_makestatic(prvm_prog_t *prog)
 	if (PRVM_serveredictfloat(ent, modelindex) >= 256 || PRVM_serveredictfloat(ent, frame) >= 256)
 		large = true;
 
-	if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-	{
-		MSG_WriteByte (&sv.signon,svc_spawnstatic);
-		MSG_WriteShort (&sv.signon, (int)PRVM_serveredictfloat(ent, modelindex));
-		MSG_WriteByte (&sv.signon, (int)PRVM_serveredictfloat(ent, frame));
-	}
-	else if (large)
+	if (large)
 	{
 		MSG_WriteByte (&sv.signon,svc_spawnstatic2);
 		MSG_WriteShort (&sv.signon, (int)PRVM_serveredictfloat(ent, modelindex));

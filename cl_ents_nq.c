@@ -9,7 +9,7 @@ void EntityFrameQuake_ReadEntity(int bits)
 
 	if (bits & U_MOREBITS)
 		bits |= (MSG_ReadByte(&cl_message)<<8);
-	if ((bits & U_EXTEND1) && cls.protocol != PROTOCOL_NEHAHRAMOVIE)
+	if ((bits & U_EXTEND1))
 	{
 		bits |= MSG_ReadByte(&cl_message) << 16;
 		if (bits & U_EXTEND2)
@@ -54,10 +54,7 @@ void EntityFrameQuake_ReadEntity(int bits)
 	s.flags = 0;
 	if (bits & U_MODEL)
 	{
-		if (cls.protocol == PROTOCOL_NEHAHRABJP || cls.protocol == PROTOCOL_NEHAHRABJP2 || cls.protocol == PROTOCOL_NEHAHRABJP3)
-							s.modelindex = (unsigned short) MSG_ReadShort(&cl_message);
-		else
-							s.modelindex = (s.modelindex & 0xFF00) | MSG_ReadByte(&cl_message);
+    s.modelindex = (s.modelindex & 0xFF00) | MSG_ReadByte(&cl_message);
 	}
 	if (bits & U_FRAME)		s.frame = (s.frame & 0xFF00) | MSG_ReadByte(&cl_message);
 	if (bits & U_COLORMAP)	s.colormap = MSG_ReadByte(&cl_message);
@@ -81,26 +78,6 @@ void EntityFrameQuake_ReadEntity(int bits)
 	if (bits & U_MODEL2)	s.modelindex = (s.modelindex & 0x00FF) | (MSG_ReadByte(&cl_message) << 8);
 	if (bits & U_VIEWMODEL)	s.flags |= RENDER_VIEWMODEL;
 	if (bits & U_EXTERIORMODEL)	s.flags |= RENDER_EXTERIORMODEL;
-
-	// LadyHavoc: to allow playback of the Nehahra movie
-	if (cls.protocol == PROTOCOL_NEHAHRAMOVIE && (bits & U_EXTEND1))
-	{
-		// LadyHavoc: evil format
-		int i = (int)MSG_ReadFloat(&cl_message);
-		int j = (int)(MSG_ReadFloat(&cl_message) * 255.0f);
-		if (i == 2)
-		{
-			i = (int)MSG_ReadFloat(&cl_message);
-			if (i)
-				s.effects |= EF_FULLBRIGHT;
-		}
-		if (j < 0)
-			s.alpha = 0;
-		else if (j == 0 || j >= 255)
-			s.alpha = 255;
-		else
-			s.alpha = j;
-	}
 
 	ent->state_previous = ent->state_current;
 	ent->state_current = s;

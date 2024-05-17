@@ -103,7 +103,7 @@ typedef struct edict_engineprivate_s
 	// mins/maxs passed to World_LinkEdict
 	vec3_t areamins, areamaxs;
 
-	// PROTOCOL_QUAKE, PROTOCOL_QUAKEDP, PROTOCOL_NEHAHRAMOVIE, PROTOCOL_QUAKEWORLD
+	// PROTOCOL_QUAKE, PROTOCOL_QUAKEDP, PROTOCOL_QUAKEWORLD
 	// baseline values
 	entity_state_t baseline;
 

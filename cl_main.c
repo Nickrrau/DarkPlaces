@@ -1305,7 +1305,7 @@ static void CL_UpdateNetworkEntity(entity_t *e, int recursionlimit, qbool interp
 	if (!(e->render.effects & (EF_NOSHADOW | EF_ADDITIVE | EF_NODEPTHTEST))
 	 && (e->render.alpha >= 1)
 	 && !(e->render.flags & RENDER_VIEWMODEL)
-	 && (!(e->render.flags & RENDER_EXTERIORMODEL) || (!cl.intermission && cls.protocol != PROTOCOL_NEHAHRAMOVIE && !cl_noplayershadow.integer)))
+	 && (!(e->render.flags & RENDER_EXTERIORMODEL)))
 		e->render.flags |= RENDER_SHADOW;
 	if (e->render.flags & RENDER_VIEWMODEL)
 		e->render.flags |= RENDER_NOSELFSHADOW;
