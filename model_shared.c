@@ -56,7 +56,6 @@ static modloader_t loader[] =
 	{NULL, "2PSB", 4, Mod_2PSB_Load},
 	{NULL, "IBSP", 4, Mod_IBSP_Load},
 	{NULL, "VBSP", 4, Mod_VBSP_Load},
-	{NULL, "DARKPLACESMODEL", 16, Mod_DARKPLACESMODEL_Load},
 	{NULL, "INTERQUAKEMODEL", 16, Mod_INTERQUAKEMODEL_Load},
 	{"map", NULL, 0, Mod_MAP_Load},
 	{NULL, NULL, 0, NULL}

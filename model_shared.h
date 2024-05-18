@@ -753,7 +753,6 @@ void Mod_OBJ_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_IDP0_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_IDP2_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_IDP3_Load(model_t *mod, void *buffer, void *bufferend);
-void Mod_DARKPLACESMODEL_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_IDSP_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_IDS2_Load(model_t *mod, void *buffer, void *bufferend);
 void Mod_INTERQUAKEMODEL_Load(model_t *mod, void *buffer, void *bufferend);

@@ -226,8 +226,6 @@ typedef struct aliasbone_s
 }
 aliasbone_t;
 
-#include "model_dpmodel.h"
-
 #include "model_iqm.h"
 
 // for decoding md3 model latlong vertex normals
