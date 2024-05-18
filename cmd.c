@@ -548,8 +548,6 @@ static void Cmd_Exec(cmd_state_t *cmd, const char *filename)
 	if (isdefaultcfg)
 	{
 		// special defaults for specific games go here, these execute before default.cfg
-		// Nehahra pushable crates malfunction in some levels if this is on
-		// Nehahra NPC AI is confused by blowupfallenzombies
 		switch(gamemode)
 		{
 		case GAME_NORMAL:

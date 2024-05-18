@@ -37,8 +37,6 @@ enum m_state_e m_state;
 
 void M_Menu_Main_f(cmd_state_t *cmd);
 	void M_Menu_SinglePlayer_f(cmd_state_t *cmd);
-		void M_Menu_Transfusion_Episode_f(cmd_state_t *cmd);
-			void M_Menu_Transfusion_Skill_f(cmd_state_t *cmd);
 		void M_Menu_Load_f(cmd_state_t *cmd);
 		void M_Menu_Save_f(cmd_state_t *cmd);
 	void M_Menu_MultiPlayer_f(cmd_state_t *cmd);
@@ -60,8 +58,6 @@ void M_Menu_ModList_f(cmd_state_t *cmd);
 
 static void M_Main_Draw (void);
 	static void M_SinglePlayer_Draw (void);
-		static void M_Transfusion_Episode_Draw (void);
-			static void M_Transfusion_Skill_Draw (void);
 		static void M_Load_Draw (void);
 		static void M_Save_Draw (void);
 	static void M_MultiPlayer_Draw (void);
@@ -84,8 +80,6 @@ static void M_ModList_Draw (void);
 
 static void M_Main_Key(cmd_state_t *cmd, int key, int ascii);
 	static void M_SinglePlayer_Key(cmd_state_t *cmd, int key, int ascii);
-		static void M_Transfusion_Episode_Key(cmd_state_t *cmd, int key, int ascii);
-			static void M_Transfusion_Skill_Key(cmd_state_t *cmd, int key, int ascii);
 		static void M_Load_Key(cmd_state_t *cmd, int key, int ascii);
 		static void M_Save_Key(cmd_state_t *cmd, int key, int ascii);
 	static void M_MultiPlayer_Key(cmd_state_t *cmd, int key, int ascii);
@@ -109,52 +103,6 @@ static qbool	m_entersound;		///< play after drawing a frame, so caching won't di
 
 #define StartingGame	(m_multiplayer_cursor == 1)
 #define JoiningGame		(m_multiplayer_cursor == 0)
-
-// Nehahra
-#define NumberOfNehahraDemos 34
-typedef struct nehahrademonames_s
-{
-	const char *name;
-	const char *desc;
-} nehahrademonames_t;
-
-static nehahrademonames_t NehahraDemos[NumberOfNehahraDemos] =
-{
-	{"intro", "Prologue"},
-	{"genf", "The Beginning"},
-	{"genlab", "A Doomed Project"},
-	{"nehcre", "The New Recruits"},
-	{"maxneh", "Breakthrough"},
-	{"maxchar", "Renewal and Duty"},
-	{"crisis", "Worlds Collide"},
-	{"postcris", "Darkening Skies"},
-	{"hearing", "The Hearing"},
-	{"getjack", "On a Mexican Radio"},
-	{"prelude", "Honor and Justice"},
-	{"abase", "A Message Sent"},
-	{"effect", "The Other Side"},
-	{"uhoh", "Missing in Action"},
-	{"prepare", "The Response"},
-	{"vision", "Farsighted Eyes"},
-	{"maxturns", "Enter the Immortal"},
-	{"backlot", "Separate Ways"},
-	{"maxside", "The Ancient Runes"},
-	{"counter", "The New Initiative"},
-	{"warprep", "Ghosts to the World"},
-	{"counter1", "A Fate Worse Than Death"},
-	{"counter2", "Friendly Fire"},
-	{"counter3", "Minor Setback"},
-	{"madmax", "Scores to Settle"},
-	{"quake", "One Man"},
-	{"cthmm", "Shattered Masks"},
-	{"shades", "Deal with the Dead"},
-	{"gophil", "An Unlikely Hero"},
-	{"cstrike", "War in Hell"},
-	{"shubset", "The Conspiracy"},
-	{"shubdie", "Even Death May Die"},
-	{"newranks", "An Empty Throne"},
-	{"seal", "The Seal is Broken"}
-};
 
 static float menu_x, menu_y, menu_width, menu_height;
 
@@ -282,64 +230,6 @@ static void M_ToggleMenu(int mode)
 			return; // the menu is on, and we want it on
 		key_dest = key_game;
 		m_state = m_none;
-	}
-}
-
-
-static int demo_cursor;
-static void M_Demo_Draw (void)
-{
-	int i;
-
-	M_Background(320, 200);
-
-	for (i = 0;i < NumberOfNehahraDemos;i++)
-		M_Print(16, 16 + 8*i, NehahraDemos[i].desc);
-
-	// line cursor
-	M_DrawCharacter (8, 16 + demo_cursor*8, 12+((int)(host.realtime*4)&1));
-}
-
-
-static void M_Menu_Demos_f(cmd_state_t *cmd)
-{
-	key_dest = key_menu;
-	m_state = m_demo;
-	m_entersound = true;
-}
-
-
-static void M_Demo_Key (cmd_state_t *cmd, int k, int ascii)
-{
-	char vabuf[1024];
-	switch (k)
-	{
-	case K_ESCAPE:
-		M_Menu_Main_f (cmd);
-		break;
-
-	case K_ENTER:
-		S_LocalSound ("sound/misc/menu2.wav");
-		m_state = m_none;
-		key_dest = key_game;
-		Cbuf_AddText (cmd, va(vabuf, sizeof(vabuf), "playdemo %s\n", NehahraDemos[demo_cursor].name));
-		return;
-
-	case K_UPARROW:
-	case K_LEFTARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		demo_cursor--;
-		if (demo_cursor < 0)
-			demo_cursor = NumberOfNehahraDemos-1;
-		break;
-
-	case K_DOWNARROW:
-	case K_RIGHTARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		demo_cursor++;
-		if (demo_cursor >= NumberOfNehahraDemos)
-			demo_cursor = 0;
-		break;
 	}
 }
 
@@ -753,165 +643,6 @@ static void M_Save_Key(cmd_state_t *cmd, int k, int ascii)
 	}
 }
 
-//=============================================================================
-/* Transfusion Single Player Episode Menu */
-
-static int	m_episode_cursor;
-#define	EPISODE_ITEMS	6
-
-void M_Menu_Transfusion_Episode_f(cmd_state_t *cmd)
-{
-	m_entersound = true;
-	m_state = m_transfusion_episode;
-	key_dest = key_menu;
-}
-
-static void M_Transfusion_Episode_Draw (void)
-{
-	int y;
-	cachepic_t *p;
-	char vabuf[1024];
-	M_Background(640, 480);
-
-	p = Draw_CachePic ("gfx/menu/tb-episodes");
-	M_DrawPic (640/2 - Draw_GetPicWidth(p)/2, 40, "gfx/menu/tb-episodes");
-	for (y = 0; y < EPISODE_ITEMS; y++){
-		M_DrawPic (0, 160 + y * 40, va(vabuf, sizeof(vabuf), "gfx/menu/episode%i", y+1));
-	}
-
-	M_DrawPic (0, 120 + (m_episode_cursor + 1) * 40, va(vabuf, sizeof(vabuf), "gfx/menu/episode%iselected", m_episode_cursor + 1));
-}
-
-static void M_Transfusion_Episode_Key(cmd_state_t *cmd, int key, int ascii)
-{
-	switch (key)
-	{
-	case K_ESCAPE:
-		M_Menu_Main_f(cmd);
-		break;
-
-	case K_DOWNARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		m_episode_cursor++;
-		if (m_episode_cursor >= EPISODE_ITEMS)
-			m_episode_cursor = 0;
-		break;
-
-	case K_UPARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		m_episode_cursor--;
-		if (m_episode_cursor < 0)
-			m_episode_cursor = EPISODE_ITEMS - 1;
-		break;
-
-	case K_ENTER:
-		Cbuf_AddText(cmd, "deathmatch 0\n");
-		m_entersound = true;
-		M_Menu_Transfusion_Skill_f(cmd);
-	}
-}
-
-//=============================================================================
-/* Transfusion Single Player Skill Menu */
-
-static int	m_skill_cursor = 2;
-#define	SKILL_ITEMS	5
-
-void M_Menu_Transfusion_Skill_f(cmd_state_t *cmd)
-{
-	m_entersound = true;
-	m_state = m_transfusion_skill;
-	key_dest = key_menu;
-}
-
-static void M_Transfusion_Skill_Draw (void)
-{
-	int y;
-	cachepic_t	*p;
-	char vabuf[1024];
-	M_Background(640, 480);
-
-	p = Draw_CachePic ("gfx/menu/tb-difficulty");
-	M_DrawPic(640/2 - Draw_GetPicWidth(p)/2, 40, "gfx/menu/tb-difficulty");
-
-	for (y = 0; y < SKILL_ITEMS; y++)
-	{
-		M_DrawPic (0, 180 + y * 40, va(vabuf, sizeof(vabuf), "gfx/menu/difficulty%i", y+1));
-	}
-	M_DrawPic (0, 140 + (m_skill_cursor + 1) *40, va(vabuf, sizeof(vabuf), "gfx/menu/difficulty%iselected", m_skill_cursor + 1));
-}
-
-static void M_Transfusion_Skill_Key(cmd_state_t *cmd, int key, int ascii)
-{
-	switch (key)
-	{
-	case K_ESCAPE:
-		M_Menu_Transfusion_Episode_f(cmd);
-		break;
-
-	case K_DOWNARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		m_skill_cursor++;
-		if (m_skill_cursor >= SKILL_ITEMS)
-			m_skill_cursor = 0;
-		break;
-
-	case K_UPARROW:
-		S_LocalSound ("sound/misc/menu1.wav");
-		m_skill_cursor--;
-		if (m_skill_cursor < 0)
-			m_skill_cursor = SKILL_ITEMS - 1;
-		break;
-
-	case K_ENTER:
-		m_entersound = true;
-		switch (m_skill_cursor)
-		{
-		case 0:
-			Cbuf_AddText(cmd, "skill 1\n");
-			break;
-		case 1:
-			Cbuf_AddText(cmd, "skill 2\n");
-			break;
-		case 2:
-			Cbuf_AddText(cmd, "skill 3\n");
-			break;
-		case 3:
-			Cbuf_AddText(cmd, "skill 4\n");
-			break;
-		case 4:
-			Cbuf_AddText(cmd, "skill 5\n");
-			break;
-		}
-		key_dest = key_game;
-		if (sv.active)
-			Cbuf_AddText(cmd, "disconnect\n");
-		Cbuf_AddText(cmd, "maxplayers 1\n");
-		Cbuf_AddText(cmd, "deathmatch 0\n");
-		Cbuf_AddText(cmd, "coop 0\n");
-		switch (m_episode_cursor)
-		{
-		case 0:
-			Cbuf_AddText(cmd, "map e1m1\n");
-			break;
-		case 1:
-			Cbuf_AddText(cmd, "map e2m1\n");
-			break;
-		case 2:
-			Cbuf_AddText(cmd, "map e3m1\n");
-			break;
-		case 3:
-			Cbuf_AddText(cmd, "map e4m1\n");
-			break;
-		case 4:
-			Cbuf_AddText(cmd, "map e6m1\n");
-			break;
-		case 5:
-			Cbuf_AddText(cmd, "map cp01\n");
-			break;
-		}
-	}
-}
 //=============================================================================
 /* MULTIPLAYER MENU */
 
@@ -2080,87 +1811,6 @@ static const char *quakebindnames[][2] =
 {"centerview", 		"center view"},
 {"+mlook", 			"mouse look"},
 {"+klook", 			"keyboard look"},
-{"+moveup",			"swim up"},
-{"+movedown",		"swim down"}
-};
-
-static const char *transfusionbindnames[][2] =
-{
-{"",				"Movement"},		// Movement commands
-{"+forward", 		"walk forward"},
-{"+back", 			"backpedal"},
-{"+left", 			"turn left"},
-{"+right", 			"turn right"},
-{"+moveleft", 		"step left"},
-{"+moveright", 		"step right"},
-{"+jump", 			"jump / swim up"},
-{"+movedown",		"swim down"},
-{"",				"Combat"},			// Combat commands
-{"impulse 1",		"Pitch Fork"},
-{"impulse 2",		"Flare Gun"},
-{"impulse 3",		"Shotgun"},
-{"impulse 4",		"Machine Gun"},
-{"impulse 5",		"Incinerator"},
-{"impulse 6",		"Bombs (TNT)"},
-{"impulse 35",		"Proximity Bomb"},
-{"impulse 36",		"Remote Detonator"},
-{"impulse 7",		"Aerosol Can"},
-{"impulse 8",		"Tesla Cannon"},
-{"impulse 9",		"Life Leech"},
-{"impulse 10",		"Voodoo Doll"},
-{"impulse 21",		"next weapon"},
-{"impulse 22",		"previous weapon"},
-{"+attack", 		"attack"},
-{"+button3",		"altfire"},
-{"",				"Inventory"},		// Inventory commands
-{"impulse 40",		"Dr.'s Bag"},
-{"impulse 41",		"Crystal Ball"},
-{"impulse 42",		"Beast Vision"},
-{"impulse 43",		"Jump Boots"},
-{"impulse 23",		"next item"},
-{"impulse 24",		"previous item"},
-{"impulse 25",		"use item"},
-{"",				"Misc"},			// Misc commands
-{"+button4",		"use"},
-{"impulse 50",		"add bot (red)"},
-{"impulse 51",		"add bot (blue)"},
-{"impulse 52",		"kick a bot"},
-{"impulse 26",		"next armor type"},
-{"impulse 27",		"identify player"},
-{"impulse 55",		"voting menu"},
-{"impulse 56",		"observer mode"},
-{"",				"Taunts"},            // Taunts
-{"impulse 70",		"taunt 0"},
-{"impulse 71",		"taunt 1"},
-{"impulse 72",		"taunt 2"},
-{"impulse 73",		"taunt 3"},
-{"impulse 74",		"taunt 4"},
-{"impulse 75",		"taunt 5"},
-{"impulse 76",		"taunt 6"},
-{"impulse 77",		"taunt 7"},
-{"impulse 78",		"taunt 8"},
-{"impulse 79",		"taunt 9"}
-};
-
-static const char *goodvsbad2bindnames[][2] =
-{
-{"impulse 69",		"Power 1"},
-{"impulse 70",		"Power 2"},
-{"impulse 71",		"Power 3"},
-{"+jump", 			"jump / swim up"},
-{"+forward", 		"walk forward"},
-{"+back", 			"backpedal"},
-{"+left", 			"turn left"},
-{"+right", 			"turn right"},
-{"+speed", 			"run"},
-{"+moveleft", 		"step left"},
-{"+moveright", 		"step right"},
-{"+strafe", 		"sidestep"},
-{"+lookup", 		"look up"},
-{"+lookdown", 		"look down"},
-{"centerview", 		"center view"},
-{"+mlook", 			"mouse look"},
-{"kill", 			"kill yourself"},
 {"+moveup",			"swim up"},
 {"+movedown",		"swim down"}
 };
@@ -3335,257 +2985,9 @@ static episode_t	rogueepisodes[] =
 	{"Deathmatch Arena", 16, 1}
 };
 
-static level_t		nehahralevels[] =
-{
-	{"nehstart",	"Welcome to Nehahra"},
-	{"neh1m1",	"Forge City1: Slipgates"},
-	{"neh1m2",	"Forge City2: Boiler"},
-	{"neh1m3",	"Forge City3: Escape"},
-	{"neh1m4",	"Grind Core"},
-	{"neh1m5",	"Industrial Silence"},
-	{"neh1m6",	"Locked-Up Anger"},
-	{"neh1m7",	"Wanderer of the Wastes"},
-	{"neh1m8",	"Artemis System Net"},
-	{"neh1m9",	"To the Death"},
-	{"neh2m1",	"The Gates of Ghoro"},
-	{"neh2m2",	"Sacred Trinity"},
-	{"neh2m3",	"Realm of the Ancients"},
-	{"neh2m4",	"Temple of the Ancients"},
-	{"neh2m5",	"Dreams Made Flesh"},
-	{"neh2m6",	"Your Last Cup of Sorrow"},
-	{"nehsec",	"Ogre's Bane"},
-	{"nehahra",	"Nehahra's Den"},
-	{"nehend",	"Quintessence"}
-};
-
-static episode_t	nehahraepisodes[] =
-{
-	{"Welcome to Nehahra", 0, 1},
-	{"The Fall of Forge", 1, 9},
-	{"The Outlands", 10, 7},
-	{"Dimension of the Lost", 17, 2}
-};
-
-// Map list for Transfusion
-static level_t		transfusionlevels[] =
-{
-	{"e1m1",		"Cradle to Grave"},
-	{"e1m2",		"Wrong Side of the Tracks"},
-	{"e1m3",		"Phantom Express"},
-	{"e1m4",		"Dark Carnival"},
-	{"e1m5",		"Hallowed Grounds"},
-	{"e1m6",		"The Great Temple"},
-	{"e1m7",		"Altar of Stone"},
-	{"e1m8",		"House of Horrors"},
-
-	{"e2m1",		"Shipwrecked"},
-	{"e2m2",		"The Lumber Mill"},
-	{"e2m3",		"Rest for the Wicked"},
-	{"e2m4",		"The Overlooked Hotel"},
-	{"e2m5",		"The Haunting"},
-	{"e2m6",		"The Cold Rush"},
-	{"e2m7",		"Bowels of the Earth"},
-	{"e2m8",		"The Lair of Shial"},
-	{"e2m9",		"Thin Ice"},
-
-	{"e3m1",		"Ghost Town"},
-	{"e3m2",		"The Siege"},
-	{"e3m3",		"Raw Sewage"},
-	{"e3m4",		"The Sick Ward"},
-	{"e3m5",		"Spare Parts"},
-	{"e3m6",		"Monster Bait"},
-	{"e3m7",		"The Pit of Cerberus"},
-	{"e3m8",		"Catacombs"},
-
-	{"e4m1",		"Butchery Loves Company"},
-	{"e4m2",		"Breeding Grounds"},
-	{"e4m3",		"Charnel House"},
-	{"e4m4",		"Crystal Lake"},
-	{"e4m5",		"Fire and Brimstone"},
-	{"e4m6",		"The Ganglion Depths"},
-	{"e4m7",		"In the Flesh"},
-	{"e4m8",		"The Hall of the Epiphany"},
-	{"e4m9",		"Mall of the Dead"},
-
-	{"bb1",			"The Stronghold"},
-	{"bb2",			"Winter Wonderland"},
-	{"bb3",			"Bodies"},
-	{"bb4",			"The Tower"},
-	{"bb5",			"Click!"},
-	{"bb6",			"Twin Fortress"},
-	{"bb7",			"Midgard"},
-	{"bb8",			"Fun With Heads"},
-	{"dm1",			"Monolith Building 11"},
-	{"dm2",			"Power!"},
-	{"dm3",			"Area 15"},
-
-	{"e6m1",		"Welcome to Your Life"},
-	{"e6m2",		"They Are Here"},
-	{"e6m3",		"Public Storage"},
-	{"e6m4",		"Aqueducts"},
-	{"e6m5",		"The Ruined Temple"},
-	{"e6m6",		"Forbidden Rituals"},
-	{"e6m7",		"The Dungeon"},
-	{"e6m8",		"Beauty and the Beast"},
-	{"e6m9",		"Forgotten Catacombs"},
-
-	{"cp01",		"Boat Docks"},
-	{"cp02",		"Old Opera House"},
-	{"cp03",		"Gothic Library"},
-	{"cp04",		"Lost Monastery"},
-	{"cp05",		"Steamboat"},
-	{"cp06",		"Graveyard"},
-	{"cp07",		"Mountain Pass"},
-	{"cp08",		"Abysmal Mine"},
-	{"cp09",		"Castle"},
-	{"cps1",		"Boggy Creek"},
-
-	{"cpbb01",		"Crypt of Despair"},
-	{"cpbb02",		"Pits of Blood"},
-	{"cpbb03",		"Unholy Cathedral"},
-	{"cpbb04",		"Deadly Inspirations"},
-
-	{"b2a15",		"Area 15 (B2)"},
-	{"b2bodies",	"BB_Bodies (B2)"},
-	{"b2cabana",	"BB_Cabana"},
-	{"b2power",		"BB_Power"},
-	{"barena",		"Blood Arena"},
-	{"bkeep",		"Blood Keep"},
-	{"bstar",		"Brown Star"},
-	{"crypt",		"The Crypt"},
-
-	{"bb3_2k1",		"Bodies Infusion"},
-	{"captasao",	"Captasao"},
-	{"curandero",	"Curandero"},
-	{"dcamp",		"DeathCamp"},
-	{"highnoon",	"HighNoon"},
-	{"qbb1",		"The Confluence"},
-	{"qbb2",		"KathartiK"},
-	{"qbb3",		"Caleb's Woodland Retreat"},
-	{"zoo",			"Zoo"},
-
-	{"dranzbb6",	"Black Coffee"},
-	{"fragm",		"Frag'M"},
-	{"maim",		"Maim"},
-	{"qe1m7",		"The House of Chthon"},
-	{"qdm1",		"Place of Two Deaths"},
-	{"qdm4",		"The Bad Place"},
-	{"qdm5",		"The Cistern"},
-	{"qmorbias",	"DM-Morbias"},
-	{"simple",		"Dead Simple"}
-};
-
-static episode_t	transfusionepisodes[] =
-{
-	{"The Way of All Flesh", 0, 8},
-	{"Even Death May Die", 8, 9},
-	{"Farewell to Arms", 17, 8},
-	{"Dead Reckoning", 25, 9},
-	{"BloodBath", 34, 11},
-	{"Post Mortem", 45, 9},
-	{"Cryptic Passage", 54, 10},
-	{"Cryptic BloodBath", 64, 4},
-	{"Blood 2", 68, 8},
-	{"Transfusion", 76, 9},
-	{"Conversions", 85, 9}
-};
-
-static level_t goodvsbad2levels[] =
-{
-	{"rts", "Many Paths"},  // 0
-	{"chess", "Chess, Scott Hess"},                         // 1
-	{"dot", "Big Wall"},
-	{"city2", "The Big City"},
-	{"bwall", "0 G like Psychic TV"},
-	{"snow", "Wireframed"},
-	{"telep", "Infinite Falling"},
-	{"faces", "Facing Bases"},
-	{"island", "Adventure Islands"},
-};
-
-static episode_t goodvsbad2episodes[] =
-{
-	{"Levels? Bevels!", 0, 8},
-};
-
-static level_t battlemechlevels[] =
-{
-	{"start", "Parking Level"},
-	{"dm1", "Hot Dump"},                        // 1
-	{"dm2", "The Pits"},
-	{"dm3", "Dimber Died"},
-	{"dm4", "Fire in the Hole"},
-	{"dm5", "Clubhouses"},
-	{"dm6", "Army go Underground"},
-};
-
-static episode_t battlemechepisodes[] =
-{
-	{"Time for Battle", 0, 7},
-};
-
-static level_t openquartzlevels[] =
-{
-	{"start", "Welcome to Openquartz"},
-
-	{"void1", "The center of nowhere"},                        // 1
-	{"void2", "The place with no name"},
-	{"void3", "The lost supply base"},
-	{"void4", "Past the outer limits"},
-	{"void5", "Into the nonexistance"},
-	{"void6", "Void walk"},
-
-	{"vtest", "Warp Central"},
-	{"box", "The deathmatch box"},
-	{"bunkers", "Void command"},
-	{"house", "House of chaos"},
-	{"office", "Overnight office kill"},
-	{"am1", "The nameless chambers"},
-};
-
-static episode_t openquartzepisodes[] =
-{
-	{"Single Player", 0, 1},
-	{"Void Deathmatch", 1, 6},
-	{"Contrib", 7, 6},
-};
-
-static level_t defeatindetail2levels[] =
-{
-	{"atac3",	"River Crossing"},
-	{"atac4",	"Canyon Chaos"},
-	{"atac7",	"Desert Stormer"},
-};
-
-static episode_t defeatindetail2episodes[] =
-{
-	{"ATAC Campaign", 0, 3},
-};
-
-static level_t prydonlevels[] =
-{
-	{"curig2", "Capel Curig"},	// 0
-
-	{"tdastart", "Gateway"},				// 1
-};
-
-static episode_t prydonepisodes[] =
-{
-	{"Prydon Gate", 0, 1},
-	{"The Dark Age", 1, 1}
-};
-
-static gamelevels_t sharewarequakegame = {"Shareware Quake", quakelevels, quakeepisodes, 2};
 static gamelevels_t registeredquakegame = {"Quake", quakelevels, quakeepisodes, 7};
 static gamelevels_t hipnoticgame = {"Scourge of Armagon", hipnoticlevels, hipnoticepisodes, 6};
 static gamelevels_t roguegame = {"Dissolution of Eternity", roguelevels, rogueepisodes, 4};
-static gamelevels_t nehahragame = {"Nehahra", nehahralevels, nehahraepisodes, 4};
-static gamelevels_t transfusiongame = {"Transfusion", transfusionlevels, transfusionepisodes, 11};
-static gamelevels_t goodvsbad2game = {"Good Vs. Bad 2", goodvsbad2levels, goodvsbad2episodes, 1};
-static gamelevels_t battlemechgame = {"Battlemech", battlemechlevels, battlemechepisodes, 1};
-static gamelevels_t openquartzgame = {"OpenQuartz", openquartzlevels, openquartzepisodes, 3};
-static gamelevels_t defeatindetail2game = {"Defeat In Detail 2", defeatindetail2levels, defeatindetail2episodes, 1};
-static gamelevels_t prydongame = {"Prydon Gate", prydonlevels, prydonepisodes, 2};
 
 typedef struct gameinfo_s
 {
@@ -3597,10 +2999,10 @@ gameinfo_t;
 
 static gameinfo_t gamelist[] =
 {
-	{GAME_NORMAL, &sharewarequakegame, &registeredquakegame},
+	{GAME_NORMAL, &registeredquakegame, &registeredquakegame},
 	{GAME_HIPNOTIC, &hipnoticgame, &hipnoticgame},
 	{GAME_ROGUE, &roguegame, &roguegame},
-	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
+	{GAME_QUOTH, &registeredquakegame, &registeredquakegame},
 };
 
 static gamelevels_t *gameoptions_levels  = NULL;
@@ -4313,8 +3715,6 @@ static void M_Init (void)
 	Cmd_AddCommand(CF_CLIENT, "menu_mods", M_Menu_ModList_f, "open the mods browser menu");
 	Cmd_AddCommand(CF_CLIENT, "help", M_Menu_Help_f, "open the help menu");
 	Cmd_AddCommand(CF_CLIENT, "menu_quit", M_Menu_Quit_f, "open the quit menu");
-	Cmd_AddCommand(CF_CLIENT, "menu_transfusion_episode", M_Menu_Transfusion_Episode_f, "open the transfusion episode select menu");
-	Cmd_AddCommand(CF_CLIENT, "menu_transfusion_skill", M_Menu_Transfusion_Skill_f, "open the transfusion skill select menu");
 	Cmd_AddCommand(CF_CLIENT, "menu_credits", M_Menu_Credits_f, "open the credits menu");
 }
 
@@ -4336,20 +3736,8 @@ void M_Draw (void)
 		M_Main_Draw ();
 		break;
 
-	case m_demo:
-		M_Demo_Draw ();
-		break;
-
 	case m_singleplayer:
 		M_SinglePlayer_Draw ();
-		break;
-
-	case m_transfusion_episode:
-		M_Transfusion_Episode_Draw ();
-		break;
-
-	case m_transfusion_skill:
-		M_Transfusion_Skill_Draw ();
 		break;
 
 	case m_load:
@@ -4449,20 +3837,8 @@ void M_KeyEvent (int key, int ascii, qbool downevent)
 		M_Main_Key(cmd, key, ascii);
 		return;
 
-	case m_demo:
-		M_Demo_Key(cmd, key, ascii);
-		return;
-
 	case m_singleplayer:
 		M_SinglePlayer_Key(cmd, key, ascii);
-		return;
-
-	case m_transfusion_episode:
-		M_Transfusion_Episode_Key(cmd, key, ascii);
-		return;
-
-	case m_transfusion_skill:
-		M_Transfusion_Skill_Key(cmd, key, ascii);
 		return;
 
 	case m_load:

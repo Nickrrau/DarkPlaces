@@ -1301,7 +1301,7 @@ static void CL_UpdateNetworkEntity(entity_t *e, int recursionlimit, qbool interp
 		if (!(e->render.effects & EF_FULLBRIGHT))
 			e->render.flags |= RENDER_LIGHT;
 	}
-	// hide player shadow during intermission or nehahra movie
+	// hide player shadow during intermission
 	if (!(e->render.effects & (EF_NOSHADOW | EF_ADDITIVE | EF_NODEPTHTEST))
 	 && (e->render.alpha >= 1)
 	 && !(e->render.flags & RENDER_VIEWMODEL)
@@ -1379,10 +1379,7 @@ static void CL_UpdateNetworkEntityTrail(entity_t *e)
 		else if (e->render.effects & EF_ROCKET)
 			trailtype = EFFECT_TR_ROCKET;
 		else if (e->render.effects & EF_GRENADE)
-		{
-			// LadyHavoc: e->render.alpha == -1 is for Nehahra dem compatibility (cigar smoke)
-			trailtype = e->render.alpha == -1 ? EFFECT_TR_NEHAHRASMOKE : EFFECT_TR_GRENADE;
-		}
+			trailtype = EFFECT_TR_GRENADE;
 		else if (e->render.effects & EF_TRACER3)
 			trailtype = EFFECT_TR_VORESPIKE;
 	}
@@ -1636,10 +1633,7 @@ static void CL_LinkNetworkEntity(entity_t *e)
 		else if (e->render.effects & EF_ROCKET)
 			trailtype = EFFECT_TR_ROCKET;
 		else if (e->render.effects & EF_GRENADE)
-		{
-			// LadyHavoc: e->render.alpha == -1 is for Nehahra dem compatibility (cigar smoke)
-			trailtype = e->render.alpha == -1 ? EFFECT_TR_NEHAHRASMOKE : EFFECT_TR_GRENADE;
-		}
+			trailtype = EFFECT_TR_GRENADE;
 		else if (e->render.effects & EF_TRACER3)
 			trailtype = EFFECT_TR_VORESPIKE;
 	}
@@ -1732,7 +1726,7 @@ static void CL_RelinkStaticEntities(void)
 			if (!(e->render.effects & EF_FULLBRIGHT))
 				e->render.flags |= RENDER_LIGHT;
 		}
-		// hide player shadow during intermission or nehahra movie
+		// hide player shadow during intermission
 		if (!(e->render.effects & (EF_NOSHADOW | EF_ADDITIVE | EF_NODEPTHTEST)) && (e->render.alpha >= 1))
 			e->render.flags |= RENDER_SHADOW;
 		VectorSet(e->render.colormod, 1, 1, 1);
