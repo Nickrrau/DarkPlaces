@@ -228,8 +228,6 @@ aliasbone_t;
 
 #include "model_dpmodel.h"
 
-#include "model_psk.h"
-
 #include "model_iqm.h"
 
 // for decoding md3 model latlong vertex normals
