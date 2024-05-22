@@ -22,8 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "image.h"
 #include "progsvm.h"
 
-#include "mprogdefs.h"
-
 #define TYPE_DEMO 1
 #define TYPE_GAME 2
 #define TYPE_BOTH 3

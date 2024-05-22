@@ -195,7 +195,6 @@ float	getserverlistindexforkey(string key)
 #include "progdefs.h"
 #include "progsvm.h"
 #include "clprogdefs.h"
-#include "mprogdefs.h"
 
 #include "cl_video.h"
 
