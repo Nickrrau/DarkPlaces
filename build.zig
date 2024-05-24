@@ -2,6 +2,7 @@ const std = @import("std");
 
 var base_dir: ?[]const u8 = undefined;
 var game: ?[]const u8 = undefined;
+var custom_name: ?[]const u8 = undefined;
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -9,6 +10,7 @@ pub fn build(b: *std.Build) !void {
 
     base_dir = b.option([]const u8, "basedir", "Location of local base game directory");
     game = b.option([]const u8, "game", "Game to run for");
+    custom_name = b.option([]const u8, "custom_name", "Custom Name for executable");
 
     try buildClient(b, target, optimize);
     try buildServer(b, target, optimize);
@@ -16,26 +18,12 @@ pub fn build(b: *std.Build) !void {
 
 fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !void {
     const cl = b.step("client", "Build Darkplaces Client");
-    const test_lib = b.addStaticLibrary(.{
-        .name = "test",
-        .target = target,
-        .optimize = optimize,
-        .root_source_file = .{ .path = "zig_text.zig" },
-    });
-    test_lib.bundle_compiler_rt = true;
-
-    const build_info = b.addStaticLibrary(.{
-        .name = "build_info",
-        .target = target,
-        .optimize = optimize,
-        .root_source_file = .{ .path = "build_info.zig" },
-    });
-    build_info.bundle_compiler_rt = true;
 
     const exe = b.addExecutable(.{
-        .name = "darkplaces",
+        .name = custom_name orelse "darkplaces",
         .target = target,
         .optimize = optimize,
+        .root_source_file = .{ .path = "main_sdl.zig" },
     });
 
     exe.addWin32ResourceFile(.{
@@ -69,8 +57,16 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkSystemLibrary("winmm");
     exe.subsystem = .Windows;
 
-    exe.linkLibrary(test_lib);
-    exe.linkLibrary(build_info);
+    for (common_static_libs) |cfg| {
+        const l = b.addStaticLibrary(.{
+            .name = cfg.name,
+            .root_source_file = cfg.root_source_file,
+            .target = target,
+            .optimize = optimize,
+        });
+        l.bundle_compiler_rt = true;
+        exe.linkLibrary(l);
+    }
 
     const sdl_dep = b.dependency("SDL2", .{
         .optimize = optimize,
@@ -107,6 +103,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkLibrary(zlib_dep.artifact("zlib"));
     exe.addIncludePath(zlib_dep.path(""));
 
+    exe.addIncludePath(.{ .path = "" });
     exe.addCSourceFiles(.{
         .files = &client ++ &common,
         .flags = &c_flags,
@@ -130,14 +127,6 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
 
 fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !void {
     const sv = b.step("server", "Build Darkplaces Server");
-    const test_lib = b.addStaticLibrary(.{
-        .name = "test",
-        .target = target,
-        .optimize = optimize,
-        .root_source_file = .{ .path = "zig_text.zig" },
-    });
-    test_lib.bundle_compiler_rt = true;
-
     const exe = b.addExecutable(.{
         .name = "darkplaces_server",
         .target = target,
@@ -161,7 +150,16 @@ fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkSystemLibrary("winmm");
     exe.subsystem = .Console;
 
-    exe.linkLibrary(test_lib);
+    for (common_static_libs) |cfg| {
+        const l = b.addStaticLibrary(.{
+            .name = cfg.name,
+            .root_source_file = cfg.root_source_file,
+            .target = target,
+            .optimize = optimize,
+        });
+        l.bundle_compiler_rt = true;
+        exe.linkLibrary(l);
+    }
 
     exe.addCSourceFiles(.{
         .files = &common ++ &server,
@@ -185,6 +183,25 @@ fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     run_step.dependOn(&run.step);
 }
 
+const common_static_libs = [_]struct {
+    name: []const u8,
+    root_source_file: std.Build.LazyPath,
+    bundle_compiler_rt: bool,
+}{
+    .{
+        .name = "build_info",
+        .root_source_file = .{ .path = "build_info.zig" },
+        .bundle_compiler_rt = true,
+    },
+    .{
+        .name = "test",
+        .root_source_file = .{ .path = "zig_text.zig" },
+        .bundle_compiler_rt = true,
+    },
+};
+const cl_static_libs = []std.Build.StaticLibraryOptions{};
+const sv_static_libs = []std.Build.StaticLibraryOptions{};
+
 const c_flags = [_][]const u8{
     "-std=c17",
     "-Werror=vla",
@@ -205,7 +222,6 @@ const c_flags = [_][]const u8{
 };
 
 const common = [_][]const u8{
-    "builddate.c",
     "bih.c",
     "crypto.c",
     "cd_shared.c",
