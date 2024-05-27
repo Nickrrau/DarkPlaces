@@ -1,6 +1,6 @@
 .{
     .name = "darkplaces",
-    .version = "0.0.0",
+    .version = "0.1.0",
     .dependencies = .{
         .SDL2 = .{
             .url = "https://github.com/zig-pkg/SDL/archive/c2a99234cc3b2d0e0d5a6c95ed86f8a4fbd69c71.tar.gz",
@@ -25,5 +25,6 @@
     },
     .paths = .{
         "",
+        "dpdefs/",
     },
 }
