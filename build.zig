@@ -2,6 +2,7 @@ const std = @import("std");
 
 var base_dir: ?[]const u8 = undefined;
 var game: ?[]const u8 = undefined;
+var custom_name: ?[]const u8 = undefined;
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -9,6 +10,7 @@ pub fn build(b: *std.Build) !void {
 
     base_dir = b.option([]const u8, "basedir", "Location of local base game directory");
     game = b.option([]const u8, "game", "Game to run for");
+    custom_name = b.option([]const u8, "custom_name", "Custom Name for executable");
 
     try buildClient(b, target, optimize);
     try buildServer(b, target, optimize);
@@ -18,7 +20,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     const cl = b.step("client", "Build Darkplaces Client");
 
     const exe = b.addExecutable(.{
-        .name = "darkplaces",
+        .name = custom_name orelse "darkplaces",
         .target = target,
         .optimize = optimize,
     });
