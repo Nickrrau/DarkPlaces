@@ -23,13 +23,11 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
         .name = custom_name orelse "darkplaces",
         .target = target,
         .optimize = optimize,
-        .root_source_file = .{ .path = "main_sdl.zig" },
+        .root_source_file = b.path("main_sdl.zig"),
     });
 
     exe.addWin32ResourceFile(.{
-        .file = .{
-            .path = "darkplaces.rc",
-        },
+        .file = b.path("darkplaces.rc"),
         .flags = &.{ "/D_UNICODE", "/DUNICODE" },
     });
 
@@ -55,17 +53,30 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkSystemLibrary("wsock32");
     exe.linkSystemLibrary("ws2_32");
     exe.linkSystemLibrary("winmm");
-    exe.subsystem = .Windows;
+    // exe.subsystem = .Windows;
 
     for (common_static_libs) |cfg| {
-        const l = b.addStaticLibrary(.{
-            .name = cfg.name,
-            .root_source_file = cfg.root_source_file,
-            .target = target,
-            .optimize = optimize,
-        });
-        l.bundle_compiler_rt = true;
-        exe.linkLibrary(l);
+        if (cfg.c) {
+            const l = b.addStaticLibrary(.{
+                .name = cfg.name,
+                .root_source_file = b.path(cfg.root_source_file),
+                .target = target,
+                .optimize = optimize,
+            });
+            l.linkLibC();
+            l.addIncludePath(b.path("./"));
+            l.bundle_compiler_rt = true;
+            exe.linkLibrary(l);
+        } else {
+            const mod = b.createModule(.{
+                .root_source_file = b.path(cfg.root_source_file),
+                .target = target,
+                .optimize = optimize,
+                .link_libc = cfg.c,
+            });
+            mod.addIncludePath(b.path("./"));
+            exe.root_module.addImport(cfg.name, mod);
+        }
     }
 
     const sdl_dep = b.dependency("SDL2", .{
@@ -103,7 +114,7 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     exe.linkLibrary(zlib_dep.artifact("zlib"));
     exe.addIncludePath(zlib_dep.path(""));
 
-    exe.addIncludePath(.{ .path = "" });
+    exe.addIncludePath(b.path(""));
     exe.addCSourceFiles(.{
         .files = &client ++ &common,
         .flags = &c_flags,
@@ -153,10 +164,14 @@ fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
     for (common_static_libs) |cfg| {
         const l = b.addStaticLibrary(.{
             .name = cfg.name,
-            .root_source_file = cfg.root_source_file,
+            .root_source_file = b.path(cfg.root_source_file),
             .target = target,
             .optimize = optimize,
         });
+        if (cfg.c) {
+            l.linkLibC();
+            l.addIncludePath(b.path("./"));
+        }
         l.bundle_compiler_rt = true;
         exe.linkLibrary(l);
     }
@@ -185,18 +200,33 @@ fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
 
 const common_static_libs = [_]struct {
     name: []const u8,
-    root_source_file: std.Build.LazyPath,
+    root_source_file: []const u8,
     bundle_compiler_rt: bool,
+    c: bool,
 }{
     .{
         .name = "build_info",
-        .root_source_file = .{ .path = "build_info.zig" },
+        .root_source_file = "build_info.zig",
         .bundle_compiler_rt = true,
+        .c = true,
     },
     .{
-        .name = "test",
-        .root_source_file = .{ .path = "zig_text.zig" },
+        .name = "sys",
+        .root_source_file = "sys.zig",
         .bundle_compiler_rt = true,
+        .c = true,
+    },
+    .{
+        .name = "cvar",
+        .root_source_file = "cvar.zig",
+        .bundle_compiler_rt = true,
+        .c = false,
+    },
+    .{
+        .name = "zvar",
+        .root_source_file = "zigvar.zig",
+        .bundle_compiler_rt = true,
+        .c = false,
     },
 };
 const cl_static_libs = []std.Build.StaticLibraryOptions{};
