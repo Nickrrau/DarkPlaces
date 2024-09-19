@@ -40,6 +40,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 # define DP_MOBILETOUCH	1
 # define DP_FREETYPE_STATIC 1
+#elif defined(__EMSCRIPTEN__) //this also defines linux, so it must come first
+# define DP_OS_NAME		"Browser"
+# define DP_OS_STR		"browser"
+# define DP_ARCH_STR	"WASM-32"
 #elif defined(__linux__)
 #elif defined(_WIN64)
 #elif defined(WIN32)
@@ -166,7 +170,7 @@ void Sys_Init_Commands (void);
 
 
 /// \returns current timestamp
-char *Sys_TimeString(const char *timeformat);
+size_t Sys_TimeString(char buf[], size_t bufsize, const char *timeformat);
 
 //
 // system IO interface (these are the sys functions that need to be implemented in a new driver atm)
@@ -219,6 +223,11 @@ void Sys_SDL_Init(void);
 void Sys_SDL_HandleEvents(void);
 
 char *Sys_SDL_GetClipboardData (void);
+
+#ifdef __EMSCRIPTEN__ //WASM-specific functions
+bool js_syncFS (bool x);
+void Sys_EM_Register_Commands(void);
+#endif
 
 extern qbool sys_supportsdlgetticks;
 unsigned int Sys_SDL_GetTicks (void); // wrapper to call SDL_GetTicks

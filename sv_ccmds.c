@@ -870,7 +870,7 @@ void SV_Name(int clientnum)
 	PRVM_serveredictstring(host_client->edict, netname) = PRVM_SetEngineString(prog, host_client->name);
 	if (strcmp(host_client->old_name, host_client->name))
 	{
-		if (host_client->begun)
+		if (host_client->begun && host_client->netconnection)
 			SV_BroadcastPrintf("\003%s ^7changed name to ^3%s\n", host_client->old_name, host_client->name);
 		dp_strlcpy(host_client->old_name, host_client->name, sizeof(host_client->old_name));
 		// send notification to all clients
@@ -1152,9 +1152,9 @@ static void SV_MaxPlayers_f(cmd_state_t *cmd)
 
 	svs.maxclients_next = n;
 	if (n == 1)
-		Cvar_Set (&cvars_all, "deathmatch", "0");
+		Cvar_SetQuick(&deathmatch, "0");
 	else
-		Cvar_Set (&cvars_all, "deathmatch", "1");
+		Cvar_SetQuick(&deathmatch, "1");
 }
 
 /*
@@ -1655,8 +1655,8 @@ void SV_InitOperatorCommands(void)
 	Cmd_AddCommand(CF_SERVER | CF_SERVER_FROM_CLIENT, "pause", SV_Pause_f, "pause the game (if the server allows pausing)");
 	Cmd_AddCommand(CF_SHARED, "kick", SV_Kick_f, "kick a player off the server by number or name");
 	Cmd_AddCommand(CF_SHARED | CF_SERVER_FROM_CLIENT, "ping", SV_Ping_f, "print ping times of all players on the server");
-	Cmd_AddCommand(CF_SHARED, "load", SV_Loadgame_f, "load a saved game file");
-	Cmd_AddCommand(CF_SHARED, "save", SV_Savegame_f, "save the game to a file");
+	Cmd_AddCommand(CF_SERVER, "load", SV_Loadgame_f, "load a saved game file");
+	Cmd_AddCommand(CF_SERVER, "save", SV_Savegame_f, "save the game to a file");
 	Cmd_AddCommand(CF_SHARED, "viewmodel", SV_Viewmodel_f, "change model of viewthing entity in current level");
 	Cmd_AddCommand(CF_SHARED, "viewframe", SV_Viewframe_f, "change animation frame of viewthing entity in current level");
 	Cmd_AddCommand(CF_SHARED, "viewnext", SV_Viewnext_f, "change to next animation frame of viewthing entity in current level");

@@ -280,7 +280,13 @@ void* Sys_GetProcAddress (dllhandle_t handle, const char* name)
 #  define HAVE_CLOCKGETTIME 1
 # endif
 # if _POSIX_VERSION >= 200112L
-#  define HAVE_CLOCK_NANOSLEEP 1
+// MacOS advertises POSIX support but doesn't implement clock_nanosleep().
+// POSIX deprecated and removed usleep() so select() seems like a safer choice.
+#  if defined(MACOSX)
+#   define HAVE_SELECT_POSIX 1
+#  else
+#   define HAVE_CLOCK_NANOSLEEP 1
+#  endif
 # endif
 #endif
 
@@ -457,7 +463,7 @@ double Sys_DirtyTime(void)
 		struct timespec ts;
 #  ifdef CLOCK_MONOTONIC_RAW
 		// Linux-specific, SDL_GetPerformanceCounter() uses it
-		clock_gettime(CLOCK_MONOTONIC, &ts);
+		clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
 #  elif defined(CLOCK_MONOTONIC)
 		// POSIX
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -497,7 +503,7 @@ double Sys_Sleep(double time)
 	if (time < 1.0/1000000.0 || host.restless)
 		return 0; // not sleeping this frame
 	if (time >= 1)
-		time = 0.999999; // ensure passed values are in range
+		time = 0.999999; // simpler, also ensures values are in range for all platform APIs
 	msec = time * 1000;
 	usec = time * 1000000;
 	nsec = time * 1000000000;
@@ -512,7 +518,7 @@ double Sys_Sleep(double time)
 	}
 
 	if(sys_debugsleep.integer)
-		Con_Printf("sys_debugsleep: requesting %u ", usec);
+		Con_Printf("sys_debugsleep: requested %u, ", usec);
 	dt = Sys_DirtyTime();
 
 	// less important on newer libcurl so no need to disturb dedicated servers
@@ -559,6 +565,14 @@ double Sys_Sleep(double time)
 		ts.tv_nsec = nsec;
 		clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL);
 	}
+#elif HAVE_SELECT_POSIX
+	else
+	{
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = usec;
+		select(0, NULL, NULL, NULL, &tv);
+	}
 #elif HAVE_WIN32_USLEEP // Windows XP/2003 minimum
 	else
 	{
@@ -582,7 +596,7 @@ double Sys_Sleep(double time)
 
 	dt = Sys_DirtyTime() - dt;
 	if(sys_debugsleep.integer)
-		Con_Printf(" got %u oversleep %d\n", (unsigned int)(dt * 1000000), (unsigned int)(dt * 1000000) - usec);
+		Con_Printf("got %u, oversleep %d\n", (uint32_t)(dt * 1000000), (uint32_t)(dt * 1000000) - usec);
 	return (dt < 0 || dt >= 1800) ? 0 : dt;
 }
 
@@ -997,16 +1011,16 @@ static void Sys_HandleCrash(int sig)
 	sys.outfd = fileno(stderr); // not async-signal-safe :(
 #ifndef WIN32
 	fcntl(sys.outfd, F_SETFL, fcntl(sys.outfd, F_GETFL, 0) & ~O_NONBLOCK);
-	Sys_Print("\n\n\e[1;37;41m    Engine Crash: ", 30);
+	Sys_Print("\n\n\x1B[1;37;41m    Engine Crash: ", 30);
 	Sys_Print(sigdesc, strlen(sigdesc));
-	Sys_Print("    \e[m\n", 8);
+	Sys_Print("    \x1B[m\n", 8);
   #if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 1
 	// the first two addresses will be in this function and in signal() in libc
 	backtrace_symbols_fd(stackframes + 2, framecount - 2, sys.outfd);
   #endif
-	Sys_Print("\e[1m", 4);
+	Sys_Print("\x1B[1m", 4);
 	Sys_Print(engineversion, strlen(engineversion));
-	Sys_Print("\e[m\n", 4);
+	Sys_Print("\x1B[m\n", 4);
 #else // Windows console doesn't support colours
 	Sys_Print("\n\nEngine Crash: ", 16);
 	Sys_Print(sigdesc, strlen(sigdesc));
@@ -1088,6 +1102,72 @@ static void Sys_InitSignals(void)
 #endif
 }
 
+// Cloudwalk: Most overpowered function declaration...
+static inline double Sys_UpdateTime (double newtime, double oldtime)
+{
+	double time = newtime - oldtime;
+
+	if (time < 0)
+	{
+		// warn if it's significant
+		if (time < -0.01)
+			Con_Printf(CON_WARN "Host_UpdateTime: time stepped backwards (went from %f to %f, difference %f)\n", oldtime, newtime, time);
+		time = 0;
+	}
+	else if (time >= 1800)
+	{
+		Con_Printf(CON_WARN "Host_UpdateTime: time stepped forward (went from %f to %f, difference %f)\n", oldtime, newtime, time);
+		time = 0;
+	}
+
+	return time;
+}
+
+#ifdef __EMSCRIPTEN__
+	#include <emscripten.h>
+#endif
+/// JS+WebGL doesn't support a main loop, only a function called to run a frame.
+static void Sys_Frame(void)
+{
+	double time, newtime, sleeptime;
+#ifdef __EMSCRIPTEN__
+	static double sleepstarttime = 0;
+	host.sleeptime = Sys_DirtyTime() - sleepstarttime;
+#endif
+
+	if (setjmp(host.abortframe)) // Something bad happened, or the server disconnected
+		host.state = host_active; // In case we were loading
+
+	if (host.state >= host_shutdown) // see Sys_HandleCrash() comments
+	{
+#ifdef __EMSCRIPTEN__
+		emscripten_cancel_main_loop();
+#endif
+#ifdef __ANDROID__
+		Sys_AllowProfiling(false);
+#endif
+		Host_Shutdown();
+		exit(0);
+	}
+
+	newtime = Sys_DirtyTime();
+	host.realtime += time = Sys_UpdateTime(newtime, host.dirtytime);
+	host.dirtytime = newtime;
+
+	sleeptime = Host_Frame(time);
+	sleeptime -= Sys_DirtyTime() - host.dirtytime; // execution time
+
+#ifdef __EMSCRIPTEN__
+	// This platform doesn't support a main loop... it will sleep when Sys_Frame() returns.
+	// Not using emscripten_sleep() via Sys_Sleep() because it would cause two sleeps per frame.
+	if (!vid_vsync.integer) // see VID_SetVsync_c()
+		emscripten_set_main_loop_timing(EM_TIMING_SETTIMEOUT, host.restless ? 0 : sleeptime * 1000.0);
+	sleepstarttime = Sys_DirtyTime();
+#else
+	host.sleeptime = Sys_Sleep(sleeptime);
+#endif
+}
+
 /** main() but renamed so we can wrap it in sys_sdl.c and sys_null.c
  * to avoid needing to include SDL.h in this file (would make the dedicated server require SDL).
  * SDL builds need SDL.h in the file where main() is defined because SDL renames and wraps main().
@@ -1127,18 +1207,13 @@ int Sys_Main(int argc, char *argv[])
 	Sys_SetTimerResolution();
 #endif
 
-	Host_Main();
-
-#ifdef __ANDROID__
-	Sys_AllowProfiling(false);
+	Host_Init();
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(Sys_Frame, 0, true); // doesn't return
+#else
+	while(true)
+		Sys_Frame();
 #endif
-
-#ifndef WIN32
-	fcntl(fileno(stdout), F_SETFL, fcntl(fileno(stdout), F_GETFL, 0) & ~O_NONBLOCK);
-	fcntl(fileno(stderr), F_SETFL, fcntl(fileno(stderr), F_GETFL, 0) & ~O_NONBLOCK);
-#endif
-	fflush(stdout);
-	fflush(stderr);
 
 	return 0;
 }

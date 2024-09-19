@@ -105,8 +105,8 @@ void Host_Error (const char *error, ...)
 
 	// LadyHavoc: if crashing very early, or currently shutting down, do
 	// Sys_Error instead
-	if (host.framecount < 3 || host.state == host_shutdown)
-		Sys_Error ("Host_Error during %s: %s", host.framecount < 3 ? "startup" : "shutdown", hosterrorstring1);
+	if (host.framecount < 1 || host.state != host_active)
+		Sys_Error ("Host_Error during %s: %s", host_state_str[host.state], hosterrorstring1);
 
 	if (hosterror)
 		Sys_Error ("Host_Error: recursively entered (original error was: %s    new error is: %s)", hosterrorstring2, hosterrorstring1);
@@ -137,6 +137,7 @@ void Host_Error (const char *error, ...)
 	// restore configured outfd
 	sys.outfd = outfd;
 
+	// can't abort a frame if we didn't start one yet, won't get here in that case (see above)
 	Host_AbortCurrentFrame();
 }
 
@@ -156,6 +157,11 @@ static void Host_Quit_f(cmd_state_t *cmd)
 static void Host_Version_f(cmd_state_t *cmd)
 {
 	Con_Printf("Version: %s\n", engineversion);
+}
+
+void Host_UpdateVersion(void)
+{
+	dpsnprintf(engineversion, sizeof(engineversion), "%s %s%s %s", gamename ? gamename : "DarkPlaces", DP_OS_NAME, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
 }
 
 static void Host_Framerate_c(cvar_t *var)
@@ -206,7 +212,9 @@ void Host_SaveConfig(const char *file)
 
 		Key_WriteBindings (f);
 		Cvar_WriteVariables (&cvars_all, f);
-
+#ifdef __EMSCRIPTEN__
+		js_syncFS(false);
+#endif
 		FS_Close (f);
 	}
 }
@@ -293,7 +301,7 @@ static void Host_InitLocal (void)
 	Cvar_RegisterVariable (&r_texture_jpeg_fastpicmip);
 }
 
-char engineversion[128];
+char engineversion[128]; ///< version string for the corner of the console, crash messages, status command, etc
 
 
 static qfile_t *locksession_fh = NULL;
@@ -366,7 +374,7 @@ void Host_UnlockSession(void)
 Host_Init
 ====================
 */
-static void Host_Init (void)
+void Host_Init (void)
 {
 	int i;
 	char vabuf[1024];
@@ -378,13 +386,12 @@ static void Host_Init (void)
 	host.hook.ConnectLocal = NULL;
 	host.hook.Disconnect = NULL;
 	host.hook.ToggleMenu = NULL;
-	host.hook.CL_Intermission = NULL;
 	host.hook.SV_Shutdown = NULL;
 
 	host.state = host_init;
 
-	if (setjmp(host.abortframe)) // Huh?!
-		Sys_Error("Engine initialization failed. Check the console (if available) for additional information.\n");
+	host.realtime = 0;
+	host.dirtytime = Sys_DirtyTime();
 
 	if (Sys_CheckParm("-profilegameonly"))
 		Sys_AllowProfiling(false);
@@ -429,6 +436,10 @@ static void Host_Init (void)
 	if (Sys_CheckParm ("-dedicated") || !cl_available)
 		cls.state = ca_dedicated;
 
+	// set and print initial version string (will be updated when gamename is changed)
+	Host_UpdateVersion(); // checks for cls.state == ca_dedicated
+	Con_Printf("%s\n", engineversion);
+
 	// initialize console command/cvar/alias/command execution systems
 	Cmd_Init();
 
@@ -447,10 +458,6 @@ static void Host_Init (void)
 
 	// initialize filesystem (including fs_basedir, fs_gamedir, -game, scr_screenshot_name, gamename)
 	FS_Init();
-
-	// ASAP! construct a version string for the corner of the console and for crash messages
-	dpsnprintf (engineversion, sizeof (engineversion), "%s %s%s, buildstring: %s", gamename, os_name, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
-	Con_Printf("%s\n", engineversion);
 
 	// initialize process nice level
 	Sys_InitProcessNice();
@@ -482,15 +489,10 @@ static void Host_Init (void)
 	// NOTE: menu commands are freed by Cmd_RestoreInitState
 	Cmd_SaveInitState();
 
-	// FIXME: put this into some neat design, but the menu should be allowed to crash
-	// without crashing the whole game, so this should just be a short-time solution
-
 	// here comes the not so critical stuff
 
 	Host_AddConfigText(cmd_local);
 	Cbuf_Execute(cmd_local->cbuf); // cannot be in Host_AddConfigText as that would cause Host_LoadConfig_f to loop!
-
-	host.state = host_active;
 
 	CL_StartVideo();
 
@@ -553,6 +555,7 @@ static void Host_Init (void)
 	}
 
 	Con_DPrint("========Initialized=========\n");
+	host.state = host_active;
 
 	if (cls.state != ca_dedicated)
 		SV_StartThread();
@@ -562,10 +565,10 @@ static void Host_Init (void)
 ===============
 Host_Shutdown
 
-Cleanly shuts down after the main loop exits.
+Cleanly shuts down, Host_Frame() must not be called again after this.
 ===============
 */
-static void Host_Shutdown(void)
+void Host_Shutdown(void)
 {
 	if (Sys_CheckParm("-profilegameonly"))
 		Sys_AllowProfiling(false);
@@ -612,9 +615,11 @@ Host_Frame
 Runs all active servers
 ==================
 */
-static double Host_Frame(double time)
+double Host_Frame(double time)
 {
 	double cl_wait, sv_wait;
+
+	++host.framecount;
 
 	TaskQueue_Frame(false);
 
@@ -649,57 +654,4 @@ static double Host_Frame(double time)
 		return cl_wait; // connected to server, main menu, or server is on different thread
 	else
 		return min(cl_wait, sv_wait); // listen server or singleplayer
-}
-
-// Cloudwalk: Most overpowered function declaration...
-static inline double Host_UpdateTime (double newtime, double oldtime)
-{
-	double time = newtime - oldtime;
-
-	if (time < 0)
-	{
-		// warn if it's significant
-		if (time < -0.01)
-			Con_Printf(CON_WARN "Host_UpdateTime: time stepped backwards (went from %f to %f, difference %f)\n", oldtime, newtime, time);
-		time = 0;
-	}
-	else if (time >= 1800)
-	{
-		Con_Printf(CON_WARN "Host_UpdateTime: time stepped forward (went from %f to %f, difference %f)\n", oldtime, newtime, time);
-		time = 0;
-	}
-
-	return time;
-}
-
-void Host_Main(void)
-{
-	double time, oldtime, sleeptime;
-
-	Host_Init(); // Start!
-
-	host.realtime = 0;
-	oldtime = Sys_DirtyTime();
-
-	// Main event loop
-	while(host.state < host_shutdown) // see Sys_HandleCrash() comments
-	{
-		// Something bad happened, or the server disconnected
-		if (setjmp(host.abortframe))
-		{
-			host.state = host_active; // In case we were loading
-			continue;
-		}
-
-		host.dirtytime = Sys_DirtyTime();
-		host.realtime += time = Host_UpdateTime(host.dirtytime, oldtime);
-		oldtime = host.dirtytime;
-
-		sleeptime = Host_Frame(time);
-		++host.framecount;
-		sleeptime -= Sys_DirtyTime() - host.dirtytime; // execution time
-		host.sleeptime = Sys_Sleep(sleeptime);
-	}
-
-	Host_Shutdown();
 }
