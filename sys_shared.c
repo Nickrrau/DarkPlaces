@@ -39,45 +39,42 @@
 #include "libcurl.h"
 
 
-sys_t sys;
+// sys_t sys;
 
-
-size_t Sys_TimeString(char buf[], size_t bufsize, const char *timeformat)
-{
-	time_t mytime = time(NULL);
-	size_t strlen;
-#if _MSC_VER >= 1400
-	struct tm mytm;
-	localtime_s(&mytm, &mytime);
-	strlen = strftime(buf, bufsize, timeformat, &mytm);
-#else
-	strlen = strftime(buf, bufsize, timeformat, localtime(&mytime));
-#endif
-	if (!strlen) // means the array contents are undefined (but it's not always an error)
-		buf[0] = '\0'; // better fix it
-	return strlen;
-}
+// static char sys_timestring[128];
+// char *Sys_TimeString(const char *timeformat)
+// {
+// 	time_t mytime = time(NULL);
+// #if _MSC_VER >= 1400
+// 	struct tm mytm;
+// 	localtime_s(&mytm, &mytime);
+// 	strftime(sys_timestring, sizeof(sys_timestring), timeformat, &mytm);
+// #else
+// 	strftime(sys_timestring, sizeof(sys_timestring), timeformat, localtime(&mytime));
+// #endif
+// 	return sys_timestring;
+// }
 
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void Sys_AllowProfiling(qbool enable)
-{
-#ifdef __ANDROID__
-#ifdef USE_PROFILER
-	extern void monstartup(const char *libname);
-	extern void moncleanup(void);
-	if (enable)
-		monstartup("libmain.so");
-	else
-		moncleanup();
-#endif
-#elif (defined(__linux__) && (defined(__GLIBC__) || defined(__GNU_LIBRARY__))) || defined(__FreeBSD__)
-	extern int moncontrol(int);
-	moncontrol(enable);
-#endif
-}
+// void Sys_AllowProfiling(qbool enable)
+// {
+// #ifdef __ANDROID__
+// #ifdef USE_PROFILER
+// 	extern void monstartup(const char *libname);
+// 	extern void moncleanup(void);
+// 	if (enable)
+// 		monstartup("libmain.so");
+// 	else
+// 		moncleanup();
+// #endif
+// #elif (defined(__linux__) && (defined(__GLIBC__) || defined(__GNU_LIBRARY__))) || defined(__FreeBSD__)
+// 	extern int moncontrol(int);
+// 	moncontrol(enable);
+// #endif
+// }
 
 
 /*
@@ -352,6 +349,7 @@ static void Sys_UpdateOutFD_c(cvar_t *var)
 
 void Sys_Init_Commands (void)
 {
+  testZig();
 	Cvar_RegisterVariable(&sys_debugsleep);
 	Cvar_RegisterVariable(&sys_usenoclockbutbenchmark);
 	Cvar_RegisterVariable(&sys_libdir);
@@ -612,42 +610,41 @@ STDIO
 */
 
 // NOTE: use only POSIX async-signal-safe library functions here (see: man signal-safety)
-void Sys_Print(const char *text, size_t textlen)
-{
-#ifdef __ANDROID__
-	if (developer.integer > 0)
-	{
-		__android_log_write(ANDROID_LOG_DEBUG, sys.argv[0], text);
-	}
-#else
-	if(sys.outfd < 0)
-		return;
-  #ifndef WIN32
-	// BUG: for some reason, NDELAY also affects stdout (1) when used on stdin (0).
-	// this is because both go to /dev/tty by default!
-	{
-		int origflags = fcntl(sys.outfd, F_GETFL, 0);
-		if (sys_stdout_blocks.integer)
-			fcntl(sys.outfd, F_SETFL, origflags & ~O_NONBLOCK);
-  #else
-    #define write _write
-  #endif
-		while(*text && textlen)
-		{
-			fs_offset_t written = (fs_offset_t)write(sys.outfd, text, textlen);
-			if(written <= 0)
-				break; // sorry, I cannot do anything about this error - without an output
-			text += written;
-			textlen -= written;
-		}
-  #ifndef WIN32
-		if (sys_stdout_blocks.integer)
-			fcntl(sys.outfd, F_SETFL, origflags);
-	}
-  #endif
-	//fprintf(stdout, "%s", text);
-#endif
-}
+// void Sys_Print(const char *text, size_t textlen)
+// {
+// #ifdef __ANDROID__
+// 	if (developer.integer > 0)
+// 	{
+// 		__android_log_write(ANDROID_LOG_DEBUG, sys.argv[0], text);
+// 	}
+// #else
+// 	if(sys.outfd < 0)
+// 		return;
+//   #ifndef WIN32
+// 	// BUG: for some reason, NDELAY also affects stdout (1) when used on stdin (0).
+// 	// this is because both go to /dev/tty by default!
+// 	{
+// 		int origflags = fcntl(sys.outfd, F_GETFL, 0);
+// 		if (sys_stdout_blocks.integer)
+// 			fcntl(sys.outfd, F_SETFL, origflags & ~O_NONBLOCK);
+//   #else
+//     #define write _write
+//   #endif
+// 		while(*text)
+// 		{
+// 			fs_offset_t written = (fs_offset_t)write(sys.outfd, text, textlen);
+// 			if(written <= 0)
+// 				break; // sorry, I cannot do anything about this error - without an output
+// 			text += written;
+// 		}
+//   #ifndef WIN32
+// 		if (sys_stdout_blocks.integer)
+// 			fcntl(sys.outfd, F_SETFL, origflags);
+// 	}
+//   #endif
+// 	//fprintf(stdout, "%s", text);
+// #endif
+// }
 
 void Sys_Printf(const char *fmt, ...)
 {
@@ -863,39 +860,39 @@ static int CPUID_Features(void)
 #endif
 
 #ifdef SSE_POSSIBLE
-qbool Sys_HaveSSE(void)
-{
-	// COMMANDLINEOPTION: SSE: -nosse disables SSE support and detection
-	if(Sys_CheckParm("-nosse"))
-		return false;
-#ifdef SSE_PRESENT
-	return true;
-#else
-	// COMMANDLINEOPTION: SSE: -forcesse enables SSE support and disables detection
-	if(Sys_CheckParm("-forcesse") || Sys_CheckParm("-forcesse2"))
-		return true;
-	if(CPUID_Features() & (1 << 25))
-		return true;
-	return false;
-#endif
-}
+// qbool Sys_HaveSSE(void)
+// {
+// 	// COMMANDLINEOPTION: SSE: -nosse disables SSE support and detection
+// 	if(Sys_CheckParm("-nosse"))
+// 		return false;
+// #ifdef SSE_PRESENT
+// 	return true;
+// #else
+// 	// COMMANDLINEOPTION: SSE: -forcesse enables SSE support and disables detection
+// 	if(Sys_CheckParm("-forcesse") || Sys_CheckParm("-forcesse2"))
+// 		return true;
+// 	if(CPUID_Features() & (1 << 25))
+// 		return true;
+// 	return false;
+// #endif
+// }
 
-qbool Sys_HaveSSE2(void)
-{
-	// COMMANDLINEOPTION: SSE2: -nosse2 disables SSE2 support and detection
-	if(Sys_CheckParm("-nosse") || Sys_CheckParm("-nosse2"))
-		return false;
-#ifdef SSE2_PRESENT
-	return true;
-#else
-	// COMMANDLINEOPTION: SSE2: -forcesse2 enables SSE2 support and disables detection
-	if(Sys_CheckParm("-forcesse2"))
-		return true;
-	if((CPUID_Features() & (3 << 25)) == (3 << 25)) // SSE is 1<<25, SSE2 is 1<<26
-		return true;
-	return false;
-#endif
-}
+// qbool Sys_HaveSSE2(void)
+// {
+// 	// COMMANDLINEOPTION: SSE2: -nosse2 disables SSE2 support and detection
+// 	if(Sys_CheckParm("-nosse") || Sys_CheckParm("-nosse2"))
+// 		return false;
+// #ifdef SSE2_PRESENT
+// 	return true;
+// #else
+// 	// COMMANDLINEOPTION: SSE2: -forcesse2 enables SSE2 support and disables detection
+// 	if(Sys_CheckParm("-forcesse2"))
+// 		return true;
+// 	if((CPUID_Features() & (3 << 25)) == (3 << 25)) // SSE is 1<<25, SSE2 is 1<<26
+// 		return true;
+// 	return false;
+// #endif
+// }
 #endif
 
 /// called to set process priority for dedicated servers
