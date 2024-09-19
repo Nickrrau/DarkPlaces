@@ -165,6 +165,7 @@ void* Sys_GetProcAddress (dllhandle_t handle, const char* name);
 int Sys_CheckParm (const char *parm);
 
 /// called after command system is initialized but before first Con_Print
+void testZig(void);
 void Sys_Init_Commands (void);
 
 

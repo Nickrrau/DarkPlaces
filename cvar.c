@@ -614,6 +614,7 @@ void Cvar_RegisterVariable (cvar_t *variable)
 
 	// first check to see if it has already been defined
 	cvar = Cvar_FindVar(cvars, variable->name, ~0);
+  Zig_RegisterVariable(variable);
 	if (cvar)
 	{
 		if (cvar->flags & CF_ALLOCATED)

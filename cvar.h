@@ -113,6 +113,7 @@ void Cvar_RegisterCallback(cvar_t *variable, void (*callback)(cvar_t *));
 /// registers a cvar that already has the name, string, and optionally the
 /// archive elements set.
 void Cvar_RegisterVariable(cvar_t *variable);
+extern void Zig_RegisterVariable (cvar_t *variable);
 
 qbool Cvar_Readonly (cvar_t *var, const char *cmd_name);
 
@@ -171,7 +172,7 @@ void Cvar_WriteVariables (cvar_state_t *cvars, struct qfile_s *f);
 // Writes lines containing "set variable value" for all variables
 // with the archive flag set to true.
 
-cvar_t *Cvar_FindVar(cvar_state_t *cvars, const char *var_name, unsigned neededflags);
+extern cvar_t *Cvar_FindVar(cvar_state_t *cvars, const char *var_name, unsigned neededflags);
 cvar_t *Cvar_FindVarAfter(cvar_state_t *cvars, const char *prev_var_name, unsigned neededflags);
 
 int Cvar_CompleteCountPossible(cvar_state_t *cvars, const char *partial, unsigned neededflags);
