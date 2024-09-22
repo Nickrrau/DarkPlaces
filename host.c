@@ -161,7 +161,7 @@ static void Host_Version_f(cmd_state_t *cmd)
 
 void Host_UpdateVersion(void)
 {
-	dpsnprintf(engineversion, sizeof(engineversion), "%s %s%s %s", gamename ? gamename : "DarkPlaces", DP_OS_NAME, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
+	dpsnprintf(engineversion, sizeof(engineversion), "%s %s%s %s", gamename ? gamename : "DarkPlaces", os_name, cls.state == ca_dedicated ? " dedicated" : "", buildstring);
 }
 
 static void Host_Framerate_c(cvar_t *var)
