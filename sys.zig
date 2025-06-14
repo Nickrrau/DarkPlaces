@@ -48,7 +48,7 @@ pub export fn Sys_HaveSSE() bool {
     return comptime switch (builtin.cpu.arch) {
         .x86_64, .x86 => std.Target.x86.featureSetHas(builtin.cpu.features, .sse),
         .aarch64 => std.Target.aarch64.featureSetHas(builtin.cpu.features, .sse),
-        .aarch64_32 => std.Target.aarch64_32.featureSetHas(builtin.cpu.features, .sse),
+        .aarch64_be => std.Target.aarch64_be.featureSetHas(builtin.cpu.features, .sse),
         else => false,
     };
 }
@@ -56,7 +56,7 @@ pub export fn Sys_HaveSSE2() bool {
     return comptime switch (builtin.cpu.arch) {
         .x86_64, .x86 => std.Target.x86.featureSetHas(builtin.cpu.features, .sse2),
         .aarch64 => std.Target.aarch64.featureSetHas(builtin.cpu.features, .sse2),
-        .aarch64_32 => std.Target.aarch64_32.featureSetHas(builtin.cpu.features, .sse2),
+        .aarch64_be => std.Target.aarch64_be.featureSetHas(builtin.cpu.features, .sse2),
         else => false,
     };
 }

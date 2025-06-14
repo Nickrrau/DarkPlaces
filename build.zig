@@ -35,19 +35,19 @@ fn buildClient(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
 
     // TODO: I don't think this is needed...
     if (target.result.isMinGW()) {
-        exe.defineCMacro("WIN32", null);
-        exe.defineCMacro("_WIN64", null);
+        exe.root_module.addCMacro("WIN32", "0");
+        exe.root_module.addCMacro("_WIN64", "0");
     }
 
-    // exe.defineCMacro("CONFIG_VIDEO_CAPTURE", null);
-    exe.defineCMacro("CONFIG_PEDANTIC", null);
-    exe.defineCMacro("_DEFAULT_SOURCE", null);
-    exe.defineCMacro("SSE", null);
-    exe.defineCMacro("SSE2", null);
-    exe.defineCMacro("CONFIG_MENU", "1");
-    exe.defineCMacro("DP_FREETYPE_STATIC", null); // Force static linking of Freetype
-    exe.defineCMacro("LINK_TO_ZLIB", null); // Force static linking of ZLib
-    // exe.defineCMacro("LINK_TO_LIBJPEG", null);
+    // exe.addCMacro("CONFIG_VIDEO_CAPTURE", "0");
+    exe.root_module.addCMacro("CONFIG_PEDANTIC", "0");
+    exe.root_module.addCMacro("_DEFAULT_SOURCE", "0");
+    exe.root_module.addCMacro("SSE", "0");
+    exe.root_module.addCMacro("SSE2", "0");
+    exe.root_module.addCMacro("CONFIG_MENU", "1");
+    exe.root_module.addCMacro("DP_FREETYPE_STATIC", "0"); // Force static linking of Freetype
+    exe.root_module.addCMacro("LINK_TO_ZLIB", "0"); // Force static linking of ZLib
+    // exe.addCMacro("LINK_TO_LIBJPEG", "0");
 
     exe.linkSystemLibrary("psapi");
     exe.linkSystemLibrary("wsock32");
@@ -146,14 +146,14 @@ fn buildServer(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bu
 
     exe.linkLibC();
     if (target.result.isMinGW()) {
-        exe.defineCMacro("WIN32", "1");
-        exe.defineCMacro("_WIN64", "1");
+        exe.root_module.addCMacro("WIN32", "1");
+        exe.root_module.addCMacro("_WIN64", "1");
     }
-    exe.defineCMacro("CONFIG_PEDANTIC", null);
-    exe.defineCMacro("_DEFAULT_SOURCE", null);
-    exe.defineCMacro("SSE", null);
-    exe.defineCMacro("SSE2", null);
-    exe.defineCMacro("DLINK_TO_ZLIB", null);
+    exe.root_module.addCMacro("CONFIG_PEDANTIC", "0");
+    exe.root_module.addCMacro("_DEFAULT_SOURCE", "0");
+    exe.root_module.addCMacro("SSE", "0");
+    exe.root_module.addCMacro("SSE2", "0");
+    exe.root_module.addCMacro("DLINK_TO_ZLIB", "0");
 
     exe.linkSystemLibrary("psapi");
     exe.linkSystemLibrary("wsock32");
