@@ -777,7 +777,7 @@ void SV_SendServerinfo (client_t *client)
 	memset(client->stats, 0, sizeof(client->stats));
 	memset(client->statsdeltabits, 0, sizeof(client->statsdeltabits));
 
-	if (sv.protocol != PROTOCOL_QUAKE && sv.protocol != PROTOCOL_QUAKEDP && sv.protocol != PROTOCOL_NEHAHRAMOVIE && sv.protocol != PROTOCOL_NEHAHRABJP && sv.protocol != PROTOCOL_NEHAHRABJP2 && sv.protocol != PROTOCOL_NEHAHRABJP3)
+	if (sv.protocol != PROTOCOL_QUAKE && sv.protocol != PROTOCOL_QUAKEDP)
 	{
 		if (sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3)
 			client->entitydatabase = EntityFrame_AllocDatabase(sv_mempool);
@@ -1409,7 +1409,7 @@ SV_ModelIndex
 */
 int SV_ModelIndex(const char *s, int precachemode)
 {
-	int i, limit = ((sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE) ? 256 : MAX_MODELS);
+	int i, limit = ((sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP) ? 256 : MAX_MODELS);
 	char filename[MAX_QPATH];
 	if (!s || !*s)
 		return 0;
@@ -1423,7 +1423,7 @@ int SV_ModelIndex(const char *s, int precachemode)
 		{
 			if (precachemode)
 			{
-				if (sv.state != ss_loading && (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3 || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5))
+				if (sv.state != ss_loading && (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5))
 				{
 					Con_Printf("SV_ModelIndex(\"%s\"): precache_model can only be done in spawn functions\n", filename);
 					return 0;
@@ -1472,7 +1472,7 @@ SV_SoundIndex
 */
 int SV_SoundIndex(const char *s, int precachemode)
 {
-	int i, limit = ((sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP) ? 256 : MAX_SOUNDS);
+	int i, limit = ((sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP) ? 256 : MAX_SOUNDS);
 	char filename[MAX_QPATH];
 	if (!s || !*s)
 		return 0;
@@ -1486,7 +1486,7 @@ int SV_SoundIndex(const char *s, int precachemode)
 		{
 			if (precachemode)
 			{
-				if (sv.state != ss_loading && (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3 || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5))
+				if (sv.state != ss_loading && (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5))
 				{
 					Con_Printf("SV_SoundIndex(\"%s\"): precache_sound can only be done in spawn functions\n", filename);
 					return 0;
@@ -1664,8 +1664,6 @@ static void SV_CreateBaseline (void)
 		if (svent->priv.server->baseline.modelindex & 0xFF00 || svent->priv.server->baseline.frame & 0xFF00)
 		{
 			large = true;
-			if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-				large = false;
 		}
 
 		// add to the message
@@ -1679,11 +1677,6 @@ static void SV_CreateBaseline (void)
 		{
 			MSG_WriteShort (&sv.signon, svent->priv.server->baseline.modelindex);
 			MSG_WriteShort (&sv.signon, svent->priv.server->baseline.frame);
-		}
-		else if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-		{
-			MSG_WriteShort (&sv.signon, svent->priv.server->baseline.modelindex);
-			MSG_WriteByte (&sv.signon, svent->priv.server->baseline.frame);
 		}
 		else
 		{
@@ -2072,7 +2065,7 @@ void SV_SpawnServer (const char *map)
 		Mod_PurgeUnused();
 
 // create a baseline for more efficient communications
-	if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
+	if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP)
 		SV_CreateBaseline ();
 
 	sv.state = ss_active; // LadyHavoc: workaround for svc_precache bug
@@ -2325,10 +2318,6 @@ static void SV_VM_Setup(void)
 		prog->limit_edicts = 640; // before quake mission pack 1 this was 512
 	else if (sv.protocol == PROTOCOL_QUAKEDP)
 		prog->limit_edicts = 2048; // guessing
-	else if (sv.protocol == PROTOCOL_NEHAHRAMOVIE)
-		prog->limit_edicts = 2048; // guessing!
-	else if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-		prog->limit_edicts = 4096; // guessing!
 	else
 		prog->limit_edicts = MAX_EDICTS;
 	prog->reserved_edicts = svs.maxclients;

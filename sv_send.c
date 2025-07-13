@@ -292,7 +292,7 @@ void SV_StartSound (prvm_edict_t *entity, int channel, const char *sample, int n
 	}
 	else
 		MSG_WriteShort (dest, (ent<<3) | channel);
-	if ((field_mask & SND_LARGESOUND) || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
+	if ((field_mask & SND_LARGESOUND))
 		MSG_WriteShort (dest, sound_num);
 	else
 		MSG_WriteByte (dest, sound_num);
@@ -894,7 +894,7 @@ void SV_MarkWriteEntityStateToClient(entity_state_t *s, client_t *client)
 		// always send world submodels in newer protocols because they don't
 		// generate much traffic (in old protocols they hog bandwidth)
 		// but only if sv_cullentities_nevercullbmodels is off
-		else if (!(s->effects & EF_NODEPTHTEST) && (!isbmodel || !sv_cullentities_nevercullbmodels.integer || sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE))
+		else if (!(s->effects & EF_NODEPTHTEST) && (!isbmodel || !sv_cullentities_nevercullbmodels.integer || sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP))
 		{
 			// entity has survived every check so far, check if visible
 			ed = PRVM_EDICT_NUM(s->number);
@@ -1157,7 +1157,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 	{
 		if (PRVM_serveredictvector(ent, punchangle)[i])
 			bits |= (SU_PUNCH1<<i);
-		if (sv.protocol != PROTOCOL_QUAKE && sv.protocol != PROTOCOL_QUAKEDP && sv.protocol != PROTOCOL_NEHAHRAMOVIE && sv.protocol != PROTOCOL_NEHAHRABJP && sv.protocol != PROTOCOL_NEHAHRABJP2 && sv.protocol != PROTOCOL_NEHAHRABJP3)
+		if (sv.protocol != PROTOCOL_QUAKE && sv.protocol != PROTOCOL_QUAKEDP)
 			if (punchvector[i])
 				bits |= (SU_PUNCHVEC1<<i);
 		if (PRVM_serveredictvector(ent, velocity)[i])
@@ -1232,7 +1232,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 		statsf[STAT_MOVEVARS_AIRACCEL_SIDEWAYS_FRICTION] = sv_airaccel_sideways_friction.value;
 	}
 
-	if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3 || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5)
+	if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4 || sv.protocol == PROTOCOL_DARKPLACES5)
 	{
 		if (stats[STAT_VIEWHEIGHT] != DEFAULT_VIEWHEIGHT) bits |= SU_VIEWHEIGHT;
 		bits |= SU_ITEMS;
@@ -1268,7 +1268,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 	{
 		if (bits & (SU_PUNCH1<<i))
 		{
-			if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
+			if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP)
 				MSG_WriteChar(msg, (int)PRVM_serveredictvector(ent, punchangle)[i]);
 			else
 				MSG_WriteAngle16i(msg, PRVM_serveredictvector(ent, punchangle)[i]);
@@ -1282,7 +1282,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 		}
 		if (bits & (SU_VELOCITY1<<i))
 		{
-			if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3 || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4)
+			if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4)
 				MSG_WriteChar(msg, (int)(PRVM_serveredictvector(ent, velocity)[i] * (1.0f / 16.0f)));
 			else
 				MSG_WriteCoord32f(msg, PRVM_serveredictvector(ent, velocity)[i]);
@@ -1310,7 +1310,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 		if (bits & SU_VIEWZOOM)
 			MSG_WriteShort (msg, bound(0, stats[STAT_VIEWZOOM], 65535));
 	}
-	else if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_NEHAHRAMOVIE || sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3 || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4)
+	else if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_QUAKEDP || sv.protocol == PROTOCOL_DARKPLACES1 || sv.protocol == PROTOCOL_DARKPLACES2 || sv.protocol == PROTOCOL_DARKPLACES3 || sv.protocol == PROTOCOL_DARKPLACES4)
 	{
 		if (bits & SU_WEAPONFRAME)
 			MSG_WriteByte (msg, stats[STAT_WEAPONFRAME]);
@@ -1318,10 +1318,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 			MSG_WriteByte (msg, stats[STAT_ARMOR]);
 		if (bits & SU_WEAPON)
 		{
-			if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-				MSG_WriteShort (msg, stats[STAT_WEAPON]);
-			else
-				MSG_WriteByte (msg, stats[STAT_WEAPON]);
+      MSG_WriteByte (msg, stats[STAT_WEAPON]);
 		}
 		MSG_WriteShort (msg, stats[STAT_HEALTH]);
 		MSG_WriteByte (msg, stats[STAT_AMMO]);
@@ -1429,10 +1426,6 @@ static void SV_SendClientDatagram (client_t *client)
 	{
 	case PROTOCOL_QUAKE:
 	case PROTOCOL_QUAKEDP:
-	case PROTOCOL_NEHAHRAMOVIE:
-	case PROTOCOL_NEHAHRABJP:
-	case PROTOCOL_NEHAHRABJP2:
-	case PROTOCOL_NEHAHRABJP3:
 	case PROTOCOL_QUAKEWORLD:
 		// no packet size limit support on Quake protocols because it just
 		// causes missing entities/effects

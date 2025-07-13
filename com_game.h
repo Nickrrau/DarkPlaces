@@ -29,7 +29,6 @@ typedef enum gamemode_e
 	GAME_HIPNOTIC,
 	GAME_ROGUE,
 	GAME_QUOTH,
-	GAME_NEHAHRA,
 	GAME_TRANSFUSION,
 	GAME_OPENQUARTZ, ///< this game sucks
 	GAME_QUAKE15, ///< added by bones_was_here as it depends on an old bug and a workaround

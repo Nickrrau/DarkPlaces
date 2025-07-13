@@ -71,7 +71,7 @@ qbool EntityFrameQuake_WriteFrame(sizebuf_t *msg, int maxsize, int numstates, co
 		if (baseline.modelindex != s->modelindex)
 		{
 			bits |= U_MODEL;
-			if ((s->modelindex & 0xFF00) && sv.protocol != PROTOCOL_NEHAHRABJP && sv.protocol != PROTOCOL_NEHAHRABJP2 && sv.protocol != PROTOCOL_NEHAHRABJP3)
+			if ((s->modelindex & 0xFF00))
 				bits |= U_MODEL2;
 		}
 		if (baseline.alpha != s->alpha)
@@ -86,11 +86,8 @@ qbool EntityFrameQuake_WriteFrame(sizebuf_t *msg, int maxsize, int numstates, co
 			bits |= U_COLORMOD;
 
 		// if extensions are disabled, clear the relevant update flags
-		if (sv.protocol == PROTOCOL_QUAKE || sv.protocol == PROTOCOL_NEHAHRAMOVIE)
+		if (sv.protocol == PROTOCOL_QUAKE)
 			bits &= 0x7FFF;
-		if (sv.protocol == PROTOCOL_NEHAHRAMOVIE)
-			if (s->alpha != 255 || s->effects & EF_FULLBRIGHT)
-				bits |= U_EXTEND1;
 
 		// write the message
 		if (bits >= 16777216)
@@ -106,20 +103,14 @@ qbool EntityFrameQuake_WriteFrame(sizebuf_t *msg, int maxsize, int numstates, co
 
 			MSG_WriteByte (&buf, bits);
 			if (bits & U_MOREBITS)		MSG_WriteByte(&buf, bits>>8);
-			if (sv.protocol != PROTOCOL_NEHAHRAMOVIE)
-			{
-				if (bits & U_EXTEND1)	MSG_WriteByte(&buf, bits>>16);
-				if (bits & U_EXTEND2)	MSG_WriteByte(&buf, bits>>24);
-			}
+      if (bits & U_EXTEND1)	MSG_WriteByte(&buf, bits>>16);
+      if (bits & U_EXTEND2)	MSG_WriteByte(&buf, bits>>24);
 			if (bits & U_LONGENTITY)	MSG_WriteShort(&buf, s->number);
 			else						MSG_WriteByte(&buf, s->number);
 
 			if (bits & U_MODEL)
 			{
-				if (sv.protocol == PROTOCOL_NEHAHRABJP || sv.protocol == PROTOCOL_NEHAHRABJP2 || sv.protocol == PROTOCOL_NEHAHRABJP3)
-					MSG_WriteShort(&buf, s->modelindex);
-				else
-					MSG_WriteByte(&buf, s->modelindex);
+        MSG_WriteByte(&buf, s->modelindex);
 			}
 			if (bits & U_FRAME)			MSG_WriteByte(&buf, s->frame);
 			if (bits & U_COLORMAP)		MSG_WriteByte(&buf, s->colormap);
@@ -139,22 +130,6 @@ qbool EntityFrameQuake_WriteFrame(sizebuf_t *msg, int maxsize, int numstates, co
 			if (bits & U_COLORMOD)		{int c = ((int)bound(0, s->colormod[0] * (7.0f / 32.0f), 7) << 5) | ((int)bound(0, s->colormod[1] * (7.0f / 32.0f), 7) << 2) | ((int)bound(0, s->colormod[2] * (3.0f / 32.0f), 3) << 0);MSG_WriteByte(&buf, c);}
 			if (bits & U_FRAME2)		MSG_WriteByte(&buf, s->frame >> 8);
 			if (bits & U_MODEL2)		MSG_WriteByte(&buf, s->modelindex >> 8);
-
-			// the nasty protocol
-			if ((bits & U_EXTEND1) && sv.protocol == PROTOCOL_NEHAHRAMOVIE)
-			{
-				if (s->effects & EF_FULLBRIGHT)
-				{
-					MSG_WriteFloat(&buf, 2); // QSG protocol version
-					MSG_WriteFloat(&buf, s->alpha <= 0 ? 0 : (s->alpha >= 255 ? 1 : s->alpha * (1.0f / 255.0f))); // alpha
-					MSG_WriteFloat(&buf, 1); // fullbright
-				}
-				else
-				{
-					MSG_WriteFloat(&buf, 1); // QSG protocol version
-					MSG_WriteFloat(&buf, s->alpha <= 0 ? 0 : (s->alpha >= 255 ? 1 : s->alpha * (1.0f / 255.0f))); // alpha
-				}
-			}
 
 			// if the commit is full, we're done this frame
 			if (msg->cursize + buf.cursize > maxsize)

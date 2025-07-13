@@ -110,52 +110,6 @@ static qbool	m_entersound;		///< play after drawing a frame, so caching won't di
 #define StartingGame	(m_multiplayer_cursor == 1)
 #define JoiningGame		(m_multiplayer_cursor == 0)
 
-// Nehahra
-#define NumberOfNehahraDemos 34
-typedef struct nehahrademonames_s
-{
-	const char *name;
-	const char *desc;
-} nehahrademonames_t;
-
-static nehahrademonames_t NehahraDemos[NumberOfNehahraDemos] =
-{
-	{"intro", "Prologue"},
-	{"genf", "The Beginning"},
-	{"genlab", "A Doomed Project"},
-	{"nehcre", "The New Recruits"},
-	{"maxneh", "Breakthrough"},
-	{"maxchar", "Renewal and Duty"},
-	{"crisis", "Worlds Collide"},
-	{"postcris", "Darkening Skies"},
-	{"hearing", "The Hearing"},
-	{"getjack", "On a Mexican Radio"},
-	{"prelude", "Honor and Justice"},
-	{"abase", "A Message Sent"},
-	{"effect", "The Other Side"},
-	{"uhoh", "Missing in Action"},
-	{"prepare", "The Response"},
-	{"vision", "Farsighted Eyes"},
-	{"maxturns", "Enter the Immortal"},
-	{"backlot", "Separate Ways"},
-	{"maxside", "The Ancient Runes"},
-	{"counter", "The New Initiative"},
-	{"warprep", "Ghosts to the World"},
-	{"counter1", "A Fate Worse Than Death"},
-	{"counter2", "Friendly Fire"},
-	{"counter3", "Minor Setback"},
-	{"madmax", "Scores to Settle"},
-	{"quake", "One Man"},
-	{"cthmm", "Shattered Masks"},
-	{"shades", "Deal with the Dead"},
-	{"gophil", "An Unlikely Hero"},
-	{"cstrike", "War in Hell"},
-	{"shubset", "The Conspiracy"},
-	{"shubdie", "Even Death May Die"},
-	{"newranks", "An Empty Throne"},
-	{"seal", "The Seal is Broken"}
-};
-
 static float menu_x, menu_y, menu_width, menu_height;
 
 static void M_Background(int width, int height)
@@ -293,8 +247,8 @@ static void M_Demo_Draw (void)
 
 	M_Background(320, 200);
 
-	for (i = 0;i < NumberOfNehahraDemos;i++)
-		M_Print(16, 16 + 8*i, NehahraDemos[i].desc);
+	// for (i = 0;i < NumberOfNehahraDemos;i++)
+	// 	M_Print(16, 16 + 8*i, NehahraDemos[i].desc);
 
 	// line cursor
 	M_DrawCharacter (8, 16 + demo_cursor*8, 12+((int)(host.realtime*4)&1));
@@ -322,23 +276,23 @@ static void M_Demo_Key (cmd_state_t *cmd, int k, int ascii)
 		S_LocalSound ("sound/misc/menu2.wav");
 		m_state = m_none;
 		key_dest = key_game;
-		Cbuf_AddText (cmd, va(vabuf, sizeof(vabuf), "playdemo %s\n", NehahraDemos[demo_cursor].name));
+		// Cbuf_AddText (cmd, va(vabuf, sizeof(vabuf), "playdemo %s\n", NehahraDemos[demo_cursor].name));
 		return;
 
 	case K_UPARROW:
 	case K_LEFTARROW:
 		S_LocalSound ("sound/misc/menu1.wav");
 		demo_cursor--;
-		if (demo_cursor < 0)
-			demo_cursor = NumberOfNehahraDemos-1;
+		// if (demo_cursor < 0)
+			// demo_cursor = NumberOfNehahraDemos-1;
 		break;
 
 	case K_DOWNARROW:
 	case K_RIGHTARROW:
 		S_LocalSound ("sound/misc/menu1.wav");
 		demo_cursor++;
-		if (demo_cursor >= NumberOfNehahraDemos)
-			demo_cursor = 0;
+		// if (demo_cursor >= NumberOfNehahraDemos)
+		// 	demo_cursor = 0;
 		break;
 	}
 }
@@ -357,42 +311,7 @@ void M_Menu_Main_f(cmd_state_t *cmd)
 	const char *s;
 	s = "gfx/mainmenu";
 
-	if (gamemode == GAME_NEHAHRA)
-	{
-		if (FS_FileExists("maps/neh1m4.bsp"))
-		{
-			if (FS_FileExists("hearing.dem"))
-			{
-				Con_DPrint("Main menu: Nehahra movie and game detected.\n");
-				NehGameType = TYPE_BOTH;
-			}
-			else
-			{
-				Con_DPrint("Nehahra game detected.\n");
-				NehGameType = TYPE_GAME;
-			}
-		}
-		else
-		{
-			if (FS_FileExists("hearing.dem"))
-			{
-				Con_DPrint("Nehahra movie detected.\n");
-				NehGameType = TYPE_DEMO;
-			}
-			else
-			{
-				Con_DPrint("Nehahra not found.\n");
-				NehGameType = TYPE_GAME; // could just complain, but...
-			}
-		}
-		if (NehGameType == TYPE_DEMO)
-			MAIN_ITEMS = 4;
-		else if (NehGameType == TYPE_GAME)
-			MAIN_ITEMS = 5;
-		else
-			MAIN_ITEMS = 6;
-	}
-	else if (gamemode == GAME_TRANSFUSION)
+	if (gamemode == GAME_TRANSFUSION)
 	{
 		s = "gfx/menu/mainmenu1";
 		if (sv.active && !cl.intermission && cl.islocalgame)
@@ -480,18 +399,7 @@ static void M_Main_Draw (void)
 	M_DrawPic (16, 4, "gfx/qplaque");
 	p = Draw_CachePic ("gfx/ttl_main");
 	M_DrawPic ( (320-Draw_GetPicWidth(p))/2, 4, "gfx/ttl_main");
-// Nehahra
-	if (gamemode == GAME_NEHAHRA)
-	{
-		if (NehGameType == TYPE_BOTH)
-			M_DrawPic (72, 32, "gfx/mainmenu");
-		else if (NehGameType == TYPE_GAME)
-			M_DrawPic (72, 32, "gfx/gamemenu");
-		else
-			M_DrawPic (72, 32, "gfx/demomenu");
-	}
-	else
-		M_DrawPic (72, 32, "gfx/mainmenu");
+  M_DrawPic (72, 32, "gfx/mainmenu");
 
 	f = (int)(host.realtime * 10)%6;
 
@@ -542,93 +450,6 @@ static void M_Main_Key(cmd_state_t *cmd, int key, int ascii)
 				break;
 			case 1:
 				M_Menu_Quit_f(cmd);
-				break;
-			}
-		}
-		else if (gamemode == GAME_NEHAHRA)
-		{
-			switch (NehGameType)
-			{
-			case TYPE_BOTH:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_SinglePlayer_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_Demos_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 4:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 5:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
-				break;
-			case TYPE_GAME:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_SinglePlayer_f(cmd);
-					break;
-
-				case 1:
-					M_Menu_MultiPlayer_f(cmd);
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 4:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
-				break;
-			case TYPE_DEMO:
-				switch (m_main_cursor)
-				{
-				case 0:
-					M_Menu_Demos_f(cmd);
-					break;
-
-				case 1:
-					key_dest = key_game;
-					if (sv.active)
-						Cbuf_AddText (cmd, "disconnect\n");
-					Cbuf_AddText (cmd, "playdemo endcred\n");
-					break;
-
-				case 2:
-					M_Menu_Options_f(cmd);
-					break;
-
-				case 3:
-					M_Menu_Quit_f(cmd);
-					break;
-				}
 				break;
 			}
 		}
@@ -3179,7 +3000,6 @@ static int M_ChooseQuitMessage(int request)
 	case GAME_HIPNOTIC:
 	case GAME_ROGUE:
 	case GAME_QUOTH:
-	case GAME_NEHAHRA:
 	case GAME_OPENQUARTZ:
 		if (request-- == 0) return M_QuitMessage("There is nothing like free beer!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("GNU is not Unix!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
@@ -3616,37 +3436,6 @@ static episode_t	rogueepisodes[] =
 	{"Deathmatch Arena", 16, 1}
 };
 
-static level_t		nehahralevels[] =
-{
-	{"nehstart",	"Welcome to Nehahra"},
-	{"neh1m1",	"Forge City1: Slipgates"},
-	{"neh1m2",	"Forge City2: Boiler"},
-	{"neh1m3",	"Forge City3: Escape"},
-	{"neh1m4",	"Grind Core"},
-	{"neh1m5",	"Industrial Silence"},
-	{"neh1m6",	"Locked-Up Anger"},
-	{"neh1m7",	"Wanderer of the Wastes"},
-	{"neh1m8",	"Artemis System Net"},
-	{"neh1m9",	"To the Death"},
-	{"neh2m1",	"The Gates of Ghoro"},
-	{"neh2m2",	"Sacred Trinity"},
-	{"neh2m3",	"Realm of the Ancients"},
-	{"neh2m4",	"Temple of the Ancients"},
-	{"neh2m5",	"Dreams Made Flesh"},
-	{"neh2m6",	"Your Last Cup of Sorrow"},
-	{"nehsec",	"Ogre's Bane"},
-	{"nehahra",	"Nehahra's Den"},
-	{"nehend",	"Quintessence"}
-};
-
-static episode_t	nehahraepisodes[] =
-{
-	{"Welcome to Nehahra", 0, 1},
-	{"The Fall of Forge", 1, 9},
-	{"The Outlands", 10, 7},
-	{"Dimension of the Lost", 17, 2}
-};
-
 // Map list for Transfusion
 static level_t		transfusionlevels[] =
 {
@@ -3801,7 +3590,6 @@ static gamelevels_t sharewarequakegame = {"Shareware Quake", quakelevels, quakee
 static gamelevels_t registeredquakegame = {"Quake", quakelevels, quakeepisodes, 7};
 static gamelevels_t hipnoticgame = {"Scourge of Armagon", hipnoticlevels, hipnoticepisodes, 6};
 static gamelevels_t roguegame = {"Dissolution of Eternity", roguelevels, rogueepisodes, 4};
-static gamelevels_t nehahragame = {"Nehahra", nehahralevels, nehahraepisodes, 4};
 static gamelevels_t transfusiongame = {"Transfusion", transfusionlevels, transfusionepisodes, 11};
 static gamelevels_t openquartzgame = {"OpenQuartz", openquartzlevels, openquartzepisodes, 3};
 
@@ -3819,7 +3607,6 @@ static gameinfo_t gamelist[] =
 	{GAME_HIPNOTIC, &hipnoticgame, &hipnoticgame},
 	{GAME_ROGUE, &roguegame, &roguegame},
 	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
-	{GAME_NEHAHRA, &nehahragame, &nehahragame},
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
 	{GAME_OPENQUARTZ, &openquartzgame, &openquartzgame},
 };

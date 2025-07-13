@@ -551,14 +551,6 @@ static void Cmd_Exec(cmd_state_t *cmd, const char *filename)
 		// and after gamegroup defaults (see below)
 		switch(gamemode)
 		{
-		case GAME_NEHAHRA:
-			Cbuf_InsertText(cmd, "\n"
-// Nehahra pushable crates malfunction in some levels if this is on
-"sv_gameplayfix_upwardvelocityclearsongroundflag 0\n"
-// Nehahra NPC AI is confused by blowupfallenzombies
-"sv_gameplayfix_blowupfallenzombies 0\n"
-				);
-			break;
 		case GAME_HIPNOTIC:
 		case GAME_QUOTH:
 			Cbuf_InsertText(cmd, "\n"
