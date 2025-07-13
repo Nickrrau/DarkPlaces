@@ -446,26 +446,6 @@ static qbool SV_PrepareEntityForSending (prvm_edict_t *ent, entity_state_t *cs, 
 	lightstyle = (unsigned char)PRVM_serveredictfloat(ent, style);
 	lightpflags = (unsigned char)PRVM_serveredictfloat(ent, pflags);
 
-	if (gamemode == GAME_TENEBRAE)
-	{
-		// tenebrae's EF_FULLDYNAMIC conflicts with Q2's EF_NODRAW
-		if (effects & 16)
-		{
-			effects &= ~16;
-			lightpflags |= PFLAGS_FULLDYNAMIC;
-		}
-		// tenebrae's EF_GREEN conflicts with DP's EF_ADDITIVE
-		if (effects & 32)
-		{
-			effects &= ~32;
-			light[0] = (int)(0.2*256);
-			light[1] = (int)(1.0*256);
-			light[2] = (int)(0.2*256);
-			light[3] = 200;
-			lightpflags |= PFLAGS_FULLDYNAMIC;
-		}
-	}
-
 	specialvisibilityradius = 0;
 	if (lightpflags & PFLAGS_FULLDYNAMIC)
 		specialvisibilityradius = max(specialvisibilityradius, light[3]);
@@ -1349,7 +1329,7 @@ void SV_WriteClientdataToMessage (client_t *client, prvm_edict_t *ent, sizebuf_t
 		MSG_WriteByte (msg, stats[STAT_NAILS]);
 		MSG_WriteByte (msg, stats[STAT_ROCKETS]);
 		MSG_WriteByte (msg, stats[STAT_CELLS]);
-		if (gamemode == GAME_HIPNOTIC || gamemode == GAME_ROGUE || gamemode == GAME_QUOTH || IS_OLDNEXUIZ_DERIVED(gamemode))
+		if (gamemode == GAME_HIPNOTIC || gamemode == GAME_ROGUE || gamemode == GAME_QUOTH )
 		{
 			for (i = 0;i < 32;i++)
 				if (stats[STAT_ACTIVEWEAPON] & (1<<i))
@@ -1668,9 +1648,6 @@ static void SV_UpdateToReliableMessages (void)
 
 		// frags
 		host_client->frags = (int)PRVM_serveredictfloat(host_client->edict, frags);
-		if(IS_OLDNEXUIZ_DERIVED(gamemode))
-			if(!host_client->begun && host_client->netconnection)
-				host_client->frags = -666;
 		if (host_client->old_frags != host_client->frags)
 		{
 			host_client->old_frags = host_client->frags;

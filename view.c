@@ -617,14 +617,6 @@ void V_CalcRefdefUsing (const matrix4x4_t *entrendermatrix, const vec3_t clviewa
 			}
 			else
 			{
-				if (gamemode == GAME_GOODVSBAD2 && chase_stevie.integer)
-				{
-					// look straight down from high above
-					viewangles[PITCH] = 90;
-					camback = 2048;
-					VectorSet(forward, 0, 0, -1);
-				}
-
 				// trace a little further so it hits a surface more consistently (to avoid 'snapping' on the edge of the range)
 				dist = -camback - 8;
 				chase_dest[0] = vieworg[0] + forward[0] * dist;

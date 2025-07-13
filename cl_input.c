@@ -1098,10 +1098,7 @@ static void CL_ClientMovement_Physics_Swim(cl_clientmovement_state_t *s)
 				s->velocity[2] =  80;
 			else
 			{
-				if (IS_NEXUIZ_DERIVED(gamemode))
-					s->velocity[2] = 200;
-				else
-					s->velocity[2] = 100;
+        s->velocity[2] = 100;
 			}
 		}
 	}
@@ -1571,12 +1568,6 @@ void CL_UpdateMoveVars(void)
 		cl.movevars_warsowbunny_turnaccel = 0;
 		cl.movevars_warsowbunny_backtosideratio = 0;
 		cl.movevars_airspeedlimit_nonqw = 0;
-	}
-
-	if(!(cl.moveflags & MOVEFLAG_VALID))
-	{
-		if(gamemode == GAME_NEXUIZ)  // Legacy hack to work with old servers of Nexuiz.
-			cl.moveflags = MOVEFLAG_Q2AIRACCELERATE;
 	}
 
 	if(cl.movevars_aircontrol_power <= 0)

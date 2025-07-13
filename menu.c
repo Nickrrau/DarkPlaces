@@ -758,40 +758,19 @@ static void M_SinglePlayer_Draw (void)
 	p = Draw_CachePic ("gfx/ttl_sgl");
 
 	// Some mods don't have a single player mode
-	if (gamemode == GAME_GOODVSBAD2 || gamemode == GAME_BATTLEMECH)
-	{
-		M_DrawPic ((320 - Draw_GetPicWidth(p)) / 2, 4, "gfx/ttl_sgl");
+  int		f;
 
-		M_DrawTextBox (60, 8 * 8, 23, 4);
-		if (gamemode == GAME_GOODVSBAD2)
-			M_Print(95, 10 * 8, "Good Vs Bad 2 is for");
-		else  // if (gamemode == GAME_BATTLEMECH)
-			M_Print(95, 10 * 8, "Battlemech is for");
-		M_Print(83, 11 * 8, "multiplayer play only");
-	}
-	else
-	{
-		int		f;
+  M_DrawPic ( (320-Draw_GetPicWidth(p))/2, 4, "gfx/ttl_sgl");
+  M_DrawPic (72, 32, "gfx/sp_menu");
 
-		M_DrawPic ( (320-Draw_GetPicWidth(p))/2, 4, "gfx/ttl_sgl");
-		M_DrawPic (72, 32, "gfx/sp_menu");
+  f = (int)(host.realtime * 10)%6;
 
-		f = (int)(host.realtime * 10)%6;
-
-		M_DrawPic (54, 32 + m_singleplayer_cursor * 20, va(vabuf, sizeof(vabuf), "gfx/menudot%i", f+1));
-	}
+  M_DrawPic (54, 32 + m_singleplayer_cursor * 20, va(vabuf, sizeof(vabuf), "gfx/menudot%i", f+1));
 }
 
 
 static void M_SinglePlayer_Key(cmd_state_t *cmd, int key, int ascii)
 {
-	if (gamemode == GAME_GOODVSBAD2 || gamemode == GAME_BATTLEMECH)
-	{
-		if (key == K_ESCAPE || key == K_ENTER)
-			m_state = m_main;
-		return;
-	}
-
 	switch (key)
 	{
 	case K_ESCAPE:
@@ -1354,12 +1333,6 @@ static void M_Setup_Draw (void)
 	M_Print(64, 40, "Your name");
 	M_DrawTextBox (160, 32, 16, 1);
 	M_PrintColored(168, 40, setup_myname);
-
-	if (gamemode != GAME_GOODVSBAD2)
-	{
-		M_Print(64, 64, "Shirt color");
-		M_Print(64, 88, "Pants color");
-	}
 
 	M_Print(64, 124-8, "Network speed limit");
 	M_Print(168, 124, va(vabuf, sizeof(vabuf), "%i (%s)", setup_rate, setup_ratetable[setup_rateindex(setup_rate)].name));
@@ -2566,11 +2539,6 @@ void M_Menu_Keys_f(cmd_state_t *cmd)
 		numcommands = sizeof(transfusionbindnames) / sizeof(transfusionbindnames[0]);
 		bindnames = transfusionbindnames;
 	}
-	else if (gamemode == GAME_GOODVSBAD2)
-	{
-		numcommands = sizeof(goodvsbad2bindnames) / sizeof(goodvsbad2bindnames[0]);
-		bindnames = goodvsbad2bindnames;
-	}
 	else
 	{
 		numcommands = sizeof(quakebindnames) / sizeof(quakebindnames[0]);
@@ -3212,39 +3180,6 @@ static int M_ChooseQuitMessage(int request)
 	case GAME_ROGUE:
 	case GAME_QUOTH:
 	case GAME_NEHAHRA:
-	case GAME_DEFEATINDETAIL2:
-		if (request-- == 0) return M_QuitMessage("Are you gonna quit","this game just like","everything else?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Milord, methinks that","thou art a lowly","quitter. Is this true?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Do I need to bust your","face open for trying","to quit?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Man, I oughta smack you","for trying to quit!","Press Y to get","smacked out.",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Press Y to quit like a","big loser in life.","Press N to stay proud","and successful!",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("If you press Y to","quit, I will summon","Satan all over your","hard drive!",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Um, Asmodeus dislikes","his children trying to","quit. Press Y to return","to your Tinkertoys.",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("If you quit now, I'll","throw a blanket-party","for you next time!",NULL,NULL,NULL,NULL,NULL);
-		break;
-	case GAME_GOODVSBAD2:
-		if (request-- == 0) return M_QuitMessage("Press Yes To Quit","...","Yes",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Do you really want to","Quit?","Play Good vs bad 3!",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("All your quit are","belong to long duck","dong",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Press Y to quit","","But are you too legit?",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("This game was made by","e@chip-web.com","It is by far the best","game ever made.",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Even I really dont","know of a game better","Press Y to quit","like rougue chedder",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("After you stop playing","tell the guys who made","counterstrike to just","kill themselves now",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Press Y to exit to DOS","","SSH login as user Y","to exit to Linux",NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Press Y like you","were waanderers","from Ys'",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("This game was made in","Nippon like the SS","announcer's saying ipon",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("you","want to quit?",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Please stop playing","this stupid game",NULL,NULL,NULL,NULL,NULL,NULL);
-		break;
-	case GAME_BATTLEMECH:
-		if (request-- == 0) return M_QuitMessage("? WHY ?","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Leave now and your mech is scrap!","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Accept Defeat?","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Wait! There are more mechs to destroy!","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Where's your bloodlust?","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Your mech here is way more impressive","than your car out there...","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL);
-		if (request-- == 0) return M_QuitMessage("Quitting won't reduce your debt","Press Y to quit, N to keep fraggin'",NULL,NULL,NULL,NULL,NULL,NULL);
-		break;
 	case GAME_OPENQUARTZ:
 		if (request-- == 0) return M_QuitMessage("There is nothing like free beer!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("GNU is not Unix!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
@@ -3836,40 +3771,6 @@ static episode_t	transfusionepisodes[] =
 	{"Conversions", 85, 9}
 };
 
-static level_t goodvsbad2levels[] =
-{
-	{"rts", "Many Paths"},  // 0
-	{"chess", "Chess, Scott Hess"},                         // 1
-	{"dot", "Big Wall"},
-	{"city2", "The Big City"},
-	{"bwall", "0 G like Psychic TV"},
-	{"snow", "Wireframed"},
-	{"telep", "Infinite Falling"},
-	{"faces", "Facing Bases"},
-	{"island", "Adventure Islands"},
-};
-
-static episode_t goodvsbad2episodes[] =
-{
-	{"Levels? Bevels!", 0, 8},
-};
-
-static level_t battlemechlevels[] =
-{
-	{"start", "Parking Level"},
-	{"dm1", "Hot Dump"},                        // 1
-	{"dm2", "The Pits"},
-	{"dm3", "Dimber Died"},
-	{"dm4", "Fire in the Hole"},
-	{"dm5", "Clubhouses"},
-	{"dm6", "Army go Underground"},
-};
-
-static episode_t battlemechepisodes[] =
-{
-	{"Time for Battle", 0, 7},
-};
-
 static level_t openquartzlevels[] =
 {
 	{"start", "Welcome to Openquartz"},
@@ -3896,42 +3797,13 @@ static episode_t openquartzepisodes[] =
 	{"Contrib", 7, 6},
 };
 
-static level_t defeatindetail2levels[] =
-{
-	{"atac3",	"River Crossing"},
-	{"atac4",	"Canyon Chaos"},
-	{"atac7",	"Desert Stormer"},
-};
-
-static episode_t defeatindetail2episodes[] =
-{
-	{"ATAC Campaign", 0, 3},
-};
-
-static level_t prydonlevels[] =
-{
-	{"curig2", "Capel Curig"},	// 0
-
-	{"tdastart", "Gateway"},				// 1
-};
-
-static episode_t prydonepisodes[] =
-{
-	{"Prydon Gate", 0, 1},
-	{"The Dark Age", 1, 1}
-};
-
 static gamelevels_t sharewarequakegame = {"Shareware Quake", quakelevels, quakeepisodes, 2};
 static gamelevels_t registeredquakegame = {"Quake", quakelevels, quakeepisodes, 7};
 static gamelevels_t hipnoticgame = {"Scourge of Armagon", hipnoticlevels, hipnoticepisodes, 6};
 static gamelevels_t roguegame = {"Dissolution of Eternity", roguelevels, rogueepisodes, 4};
 static gamelevels_t nehahragame = {"Nehahra", nehahralevels, nehahraepisodes, 4};
 static gamelevels_t transfusiongame = {"Transfusion", transfusionlevels, transfusionepisodes, 11};
-static gamelevels_t goodvsbad2game = {"Good Vs. Bad 2", goodvsbad2levels, goodvsbad2episodes, 1};
-static gamelevels_t battlemechgame = {"Battlemech", battlemechlevels, battlemechepisodes, 1};
 static gamelevels_t openquartzgame = {"OpenQuartz", openquartzlevels, openquartzepisodes, 3};
-static gamelevels_t defeatindetail2game = {"Defeat In Detail 2", defeatindetail2levels, defeatindetail2episodes, 1};
-static gamelevels_t prydongame = {"Prydon Gate", prydonlevels, prydonepisodes, 2};
 
 typedef struct gameinfo_s
 {
@@ -3949,11 +3821,7 @@ static gameinfo_t gamelist[] =
 	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
 	{GAME_NEHAHRA, &nehahragame, &nehahragame},
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
-	{GAME_GOODVSBAD2, &goodvsbad2game, &goodvsbad2game},
-	{GAME_BATTLEMECH, &battlemechgame, &battlemechgame},
 	{GAME_OPENQUARTZ, &openquartzgame, &openquartzgame},
-	{GAME_DEFEATINDETAIL2, &defeatindetail2game, &defeatindetail2game},
-	{GAME_PRYDON, &prydongame, &prydongame},
 };
 
 static gamelevels_t *gameoptions_levels  = NULL;
@@ -4004,105 +3872,93 @@ void M_GameOptions_Draw (void)
 	M_Print(0, 56, "      Max players");
 	M_Print(160, 56, va(vabuf, sizeof(vabuf), "%i", maxplayers) );
 
-	if (gamemode != GAME_GOODVSBAD2)
-	{
-		M_Print(0, 64, "        Game Type");
-		if (gamemode == GAME_TRANSFUSION)
-		{
-			if (!coop.integer && !deathmatch.integer)
-				Cvar_SetQuick(&deathmatch, "1");
-			if (deathmatch.integer == 0)
-				M_Print(160, 64, "Cooperative");
-			else if (deathmatch.integer == 2)
-				M_Print(160, 64, "Capture the Flag");
-			else
-				M_Print(160, 64, "Blood Bath");
-		}
-		else if (gamemode == GAME_BATTLEMECH)
-		{
-			if (!deathmatch.integer)
-				Cvar_SetQuick(&deathmatch, "1");
-			if (deathmatch.integer == 2)
-				M_Print(160, 64, "Rambo Match");
-			else
-				M_Print(160, 64, "Deathmatch");
-		}
-		else
-		{
-			if (!coop.integer && !deathmatch.integer)
-				Cvar_SetQuick(&deathmatch, "1");
-			if (coop.integer)
-				M_Print(160, 64, "Cooperative");
-			else
-				M_Print(160, 64, "Deathmatch");
-		}
+  M_Print(0, 64, "        Game Type");
+  if (gamemode == GAME_TRANSFUSION)
+  {
+    if (!coop.integer && !deathmatch.integer)
+      Cvar_SetQuick(&deathmatch, "1");
+    if (deathmatch.integer == 0)
+      M_Print(160, 64, "Cooperative");
+    else if (deathmatch.integer == 2)
+      M_Print(160, 64, "Capture the Flag");
+    else
+      M_Print(160, 64, "Blood Bath");
+  }
+  else
+  {
+    if (!coop.integer && !deathmatch.integer)
+      Cvar_SetQuick(&deathmatch, "1");
+    if (coop.integer)
+      M_Print(160, 64, "Cooperative");
+    else
+      M_Print(160, 64, "Deathmatch");
+  }
 
-		M_Print(0, 72, "        Teamplay");
-		if (gamemode == GAME_ROGUE)
-		{
-			const char *msg;
+  M_Print(0, 72, "        Teamplay");
+  if (gamemode == GAME_ROGUE)
+  {
+    const char *msg;
 
-			switch((int)teamplay.integer)
-			{
-				case 1: msg = "No Friendly Fire"; break;
-				case 2: msg = "Friendly Fire"; break;
-				case 3: msg = "Tag"; break;
-				case 4: msg = "Capture the Flag"; break;
-				case 5: msg = "One Flag CTF"; break;
-				case 6: msg = "Three Team CTF"; break;
-				default: msg = "Off"; break;
-			}
-			M_Print(160, 72, msg);
-		}
-		else
-		{
-			const char *msg;
+    switch((int)teamplay.integer)
+    {
+      case 1: msg = "No Friendly Fire"; break;
+      case 2: msg = "Friendly Fire"; break;
+      case 3: msg = "Tag"; break;
+      case 4: msg = "Capture the Flag"; break;
+      case 5: msg = "One Flag CTF"; break;
+      case 6: msg = "Three Team CTF"; break;
+      default: msg = "Off"; break;
+    }
+    M_Print(160, 72, msg);
+  }
+  else
+  {
+    const char *msg;
 
-			switch (teamplay.integer)
-			{
-				case 0: msg = "Off"; break;
-				case 2: msg = "Friendly Fire"; break;
-				default: msg = "No Friendly Fire"; break;
-			}
-			M_Print(160, 72, msg);
-		}
-		M_Print(0, 80, "            Skill");
-		if (gamemode == GAME_TRANSFUSION)
-		{
-			if (skill.integer == 1)
-				M_Print(160, 80, "Still Kicking");
-			else if (skill.integer == 2)
-				M_Print(160, 80, "Pink On The Inside");
-			else if (skill.integer == 3)
-				M_Print(160, 80, "Lightly Broiled");
-			else if (skill.integer == 4)
-				M_Print(160, 80, "Well Done");
-			else
-				M_Print(160, 80, "Extra Crispy");
-		}
-		else
-		{
-			if (skill.integer == 0)
-				M_Print(160, 80, "Easy difficulty");
-			else if (skill.integer == 1)
-				M_Print(160, 80, "Normal difficulty");
-			else if (skill.integer == 2)
-				M_Print(160, 80, "Hard difficulty");
-			else
-				M_Print(160, 80, "Nightmare difficulty");
-		}
-		M_Print(0, 88, "       Frag Limit");
-		if (fraglimit.integer == 0)
-			M_Print(160, 88, "none");
-		else
-			M_Print(160, 88, va(vabuf, sizeof(vabuf), "%i frags", fraglimit.integer));
+    switch (teamplay.integer)
+    {
+      case 0: msg = "Off"; break;
+      case 2: msg = "Friendly Fire"; break;
+      default: msg = "No Friendly Fire"; break;
+    }
+    M_Print(160, 72, msg);
+  }
+  M_Print(0, 80, "            Skill");
+  if (gamemode == GAME_TRANSFUSION)
+  {
+    if (skill.integer == 1)
+      M_Print(160, 80, "Still Kicking");
+    else if (skill.integer == 2)
+      M_Print(160, 80, "Pink On The Inside");
+    else if (skill.integer == 3)
+      M_Print(160, 80, "Lightly Broiled");
+    else if (skill.integer == 4)
+      M_Print(160, 80, "Well Done");
+    else
+      M_Print(160, 80, "Extra Crispy");
+  }
+  else
+  {
+    if (skill.integer == 0)
+      M_Print(160, 80, "Easy difficulty");
+    else if (skill.integer == 1)
+      M_Print(160, 80, "Normal difficulty");
+    else if (skill.integer == 2)
+      M_Print(160, 80, "Hard difficulty");
+    else
+      M_Print(160, 80, "Nightmare difficulty");
+  }
+  M_Print(0, 88, "       Frag Limit");
+  if (fraglimit.integer == 0)
+    M_Print(160, 88, "none");
+  else
+    M_Print(160, 88, va(vabuf, sizeof(vabuf), "%i frags", fraglimit.integer));
 
-		M_Print(0, 96, "       Time Limit");
-		if (timelimit.integer == 0)
-			M_Print(160, 96, "none");
-		else
-			M_Print(160, 96, va(vabuf, sizeof(vabuf), "%i minutes", timelimit.integer));
-	}
+  M_Print(0, 96, "       Time Limit");
+  if (timelimit.integer == 0)
+    M_Print(160, 96, "none");
+  else
+    M_Print(160, 96, va(vabuf, sizeof(vabuf), "%i minutes", timelimit.integer));
 
 	M_Print(0, 104, "    Public server");
 	M_Print(160, 104, (sv_public.integer == 0) ? "no" : "yes");
@@ -4113,12 +3969,6 @@ void M_GameOptions_Draw (void)
 	M_Print(0, 128, "      Server name");
 	M_DrawTextBox (0, 132, 38, 1);
 	M_Print(8, 140, hostname.string);
-
-	if (gamemode != GAME_GOODVSBAD2)
-	{
-		M_Print(0, 160, "         Episode");
-		M_Print(160, 160, gameoptions_levels->episodes[startepisode].description);
-	}
 
 	M_Print(0, 168, "           Level");
 	M_Print(160, 168, gameoptions_levels->levels[gameoptions_levels->episodes[startepisode].firstLevel + startlevel].description);
@@ -4167,8 +4017,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 2:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		if (gamemode == GAME_TRANSFUSION)
 		{
 			switch (deathmatch.integer)
@@ -4192,13 +4040,6 @@ static void M_NetStart_Change (int dir)
 					Cvar_SetValueQuick (&deathmatch, 0);
 			}
 		}
-		else if (gamemode == GAME_BATTLEMECH)
-		{
-			if (deathmatch.integer == 2) // changing from Rambo to Deathmatch
-				Cvar_SetValueQuick (&deathmatch, 0);
-			else // changing from Deathmatch to Rambo
-				Cvar_SetValueQuick (&deathmatch, 2);
-		}
 		else
 		{
 			if (deathmatch.integer) // changing from deathmatch to coop
@@ -4215,8 +4056,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 3:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		if (gamemode == GAME_ROGUE)
 			count = 6;
 		else
@@ -4230,8 +4069,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 4:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		Cvar_SetValueQuick (&skill, skill.integer + dir);
 		if (gamemode == GAME_TRANSFUSION)
 		{
@@ -4250,8 +4087,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 5:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		Cvar_SetValueQuick (&fraglimit, fraglimit.integer + dir*10);
 		if (fraglimit.integer > 100)
 			Cvar_SetValueQuick (&fraglimit, 0);
@@ -4260,8 +4095,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 6:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		Cvar_SetValueQuick (&timelimit, timelimit.value + dir*5);
 		if (timelimit.value > 60)
 			Cvar_SetValueQuick (&timelimit, 0);
@@ -4283,8 +4116,6 @@ static void M_NetStart_Change (int dir)
 		break;
 
 	case 10:
-		if (gamemode == GAME_GOODVSBAD2)
-			break;
 		startepisode += dir;
 
 		if (startepisode < 0)

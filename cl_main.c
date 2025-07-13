@@ -187,20 +187,10 @@ void CL_ClearState(void)
 		cl.entities[i].state_current = defaultstate;
 	}
 
-	if (IS_NEXUIZ_DERIVED(gamemode))
-	{
-		VectorSet(cl.playerstandmins, -16, -16, -24);
-		VectorSet(cl.playerstandmaxs, 16, 16, 45);
-		VectorSet(cl.playercrouchmins, -16, -16, -24);
-		VectorSet(cl.playercrouchmaxs, 16, 16, 25);
-	}
-	else
-	{
-		VectorSet(cl.playerstandmins, -16, -16, -24);
-		VectorSet(cl.playerstandmaxs, 16, 16, 24);
-		VectorSet(cl.playercrouchmins, -16, -16, -24);
-		VectorSet(cl.playercrouchmaxs, 16, 16, 24);
-	}
+  VectorSet(cl.playerstandmins, -16, -16, -24);
+  VectorSet(cl.playerstandmaxs, 16, 16, 24);
+  VectorSet(cl.playercrouchmins, -16, -16, -24);
+  VectorSet(cl.playercrouchmaxs, 16, 16, 24);
 
 	// disable until we get textures for it
 	R_ResetSkyBox();
@@ -1299,9 +1289,6 @@ static void CL_UpdateNetworkEntity(entity_t *e, int recursionlimit, qbool interp
 		Matrix4x4_CreateFromQuakeEntity(&e->render.matrix, origin[0], origin[1], origin[2], angles[0], angles[1], angles[2], e->render.scale);
 	}
 
-	// tenebrae's sprites are all additive mode (weird)
-	if (gamemode == GAME_TENEBRAE && e->render.model && e->render.model->type == mod_sprite)
-		e->render.flags |= RENDER_ADDITIVE;
 	// player model is only shown with chase_active on
 	if (e->state_current.number == cl.viewentity)
 		e->render.flags |= RENDER_EXTERIORMODEL;
@@ -1360,10 +1347,7 @@ static void CL_UpdateNetworkEntityTrail(entity_t *e)
 	{
 		if (e->render.effects & EF_BRIGHTFIELD)
 		{
-			if (IS_NEXUIZ_DERIVED(gamemode))
-				trailtype = EFFECT_TR_NEXUIZPLASMA;
-			else
-				CL_EntityParticles(e);
+      CL_EntityParticles(e);
 		}
 		if (e->render.effects & EF_FLAME)
 			CL_ParticleTrail(EFFECT_EF_FLAME, bound(0, cl.time - cl.oldtime, 0.1), origin, origin, vec3_origin, vec3_origin, NULL, 0, false, true, NULL, NULL, 1);
@@ -1521,10 +1505,7 @@ static void CL_UpdateViewModel(void)
 		ent->state_current.modelindex = 0;
 	else if (cl.stats[STAT_ITEMS] & IT_INVISIBILITY)
 	{
-		if (gamemode == GAME_TRANSFUSION)
-			ent->state_current.alpha = 128;
-		else
-			ent->state_current.modelindex = 0;
+    ent->state_current.modelindex = 0;
 	}
 	ent->state_current.alpha = cl.entities[cl.viewentity].state_current.alpha;
 	ent->state_current.effects = EF_NOSHADOW | (cl.entities[cl.viewentity].state_current.effects & (EF_ADDITIVE | EF_FULLBRIGHT | EF_NODEPTHTEST | EF_NOGUNBOB));
@@ -1585,11 +1566,6 @@ static void CL_LinkNetworkEntity(entity_t *e)
 	// LadyHavoc: if the entity has no effects, don't check each
 	if (e->render.effects & (EF_BRIGHTFIELD | EF_DIMLIGHT | EF_BRIGHTLIGHT | EF_RED | EF_BLUE | EF_FLAME | EF_STARDUST))
 	{
-		if (e->render.effects & EF_BRIGHTFIELD)
-		{
-			if (IS_NEXUIZ_DERIVED(gamemode))
-				trailtype = EFFECT_TR_NEXUIZPLASMA;
-		}
 		if (e->render.effects & EF_DIMLIGHT)
 		{
 			dlightradius = max(dlightradius, 200);

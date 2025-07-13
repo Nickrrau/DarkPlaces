@@ -3405,7 +3405,7 @@ void GL_Main_Init(void)
 	Cvar_RegisterVariable(&r_q1bsp_lightmap_updates_enabled);
 	Cvar_RegisterVariable(&r_q1bsp_lightmap_updates_combine);
 	Cvar_RegisterVariable(&r_q1bsp_lightmap_updates_hidden_surfaces);
-	if (gamemode == GAME_NEHAHRA || gamemode == GAME_TENEBRAE)
+	if (gamemode == GAME_NEHAHRA )
 		Cvar_SetQuick(&r_fullbrights, "0");
 #ifdef DP_MOBILETOUCH
 	// GLES devices have terrible depth precision in general, so...
