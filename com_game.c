@@ -56,7 +56,6 @@ static const gamemode_info_t gamemode_info [GAME_COUNT] =
 { GAME_ROGUE,					GAME_NORMAL,				"rogue",				"-rogue",					"Darkplaces-Rogue",			"Darkplaces-Rogue",			"id1",		"rogue",		"dp",				"darkplaces"			}, // COMMANDLINEOPTION: Game: -rogue runs Quake mission pack 2: The Dissolution of Eternity
 { GAME_QUOTH,					GAME_NORMAL,				"quoth",				"-quoth",					"Darkplaces-Quoth",			"Darkplaces-Quoth",			"id1",		"quoth",		"dp",				"darkplaces"			}, // COMMANDLINEOPTION: Game: -quoth runs the Quoth mod for playing community maps made for it
 { GAME_TRANSFUSION,				GAME_TRANSFUSION,			"transfusion",			"-transfusion",				"Transfusion",				"Transfusion",				"basetf",	NULL,			"transfusion",		"transfusion"			}, // COMMANDLINEOPTION: Game: -transfusion runs Transfusion (the recreation of Blood in Quake)
-{ GAME_OPENQUARTZ,				GAME_NORMAL,				"openquartz",			"-openquartz",				"OpenQuartz",				"OpenQuartz",				"id1",		NULL,			"openquartz",		"darkplaces"			}, // COMMANDLINEOPTION: Game: -openquartz runs the game OpenQuartz, a standalone GPL replacement of the quake content
 { GAME_QUAKE15,					GAME_NORMAL,				"quake15",				"-quake15",					"Quake 1.5",				"Quake_1.5",				"id1",		"quake15",		"quake15",			"darkplaces"			}, // COMMANDLINEOPTION: Game: -quake15 runs the Quake 1.5 or Quake Combat+ mod
 { GAME_AD,						GAME_NORMAL,				"ad",					"-ad",						"Arcane Dimensions",		"Arcane_Dimensions",		"id1",		"ad",			"ad",				"darkplaces"			}, // COMMANDLINEOPTION: Game: -ad runs the Arcane Dimensions mod
 };

@@ -3000,7 +3000,6 @@ static int M_ChooseQuitMessage(int request)
 	case GAME_HIPNOTIC:
 	case GAME_ROGUE:
 	case GAME_QUOTH:
-	case GAME_OPENQUARTZ:
 		if (request-- == 0) return M_QuitMessage("There is nothing like free beer!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("GNU is not Unix!","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
 		if (request-- == 0) return M_QuitMessage("You prefer free beer over free speech?","Press Y to quit, N to stay",NULL,NULL,NULL,NULL,NULL,NULL);
@@ -3608,7 +3607,6 @@ static gameinfo_t gamelist[] =
 	{GAME_ROGUE, &roguegame, &roguegame},
 	{GAME_QUOTH, &sharewarequakegame, &registeredquakegame},
 	{GAME_TRANSFUSION, &transfusiongame, &transfusiongame},
-	{GAME_OPENQUARTZ, &openquartzgame, &openquartzgame},
 };
 
 static gamelevels_t *gameoptions_levels  = NULL;
