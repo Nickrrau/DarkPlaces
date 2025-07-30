@@ -571,22 +571,6 @@ static void Cmd_Exec(cmd_state_t *cmd, const char *filename)
 "mod_q1bsp_traceoutofsolid 0\n"
 				);
 			break;
-		case GAME_QUAKE15:
-			Cbuf_InsertText(cmd, "\n"
-// Corpses slide around without this bug from old DP versions
-"sv_gameplayfix_impactbeforeonground 1\n"
-// Reduce likelihood of incorrectly placed corpses sinking into the ground
-"sv_gameplayfix_unstickentities 1\n"
-			);
-			break;
-		case GAME_AD:
-			if (cls.state != ca_dedicated)
-				Cbuf_InsertText(cmd, "\n"
-// Arcane Dimensions V1.80 Patch 1 assumes engines that don't pass values to CSQC_Init() are DP,
-// instead of doing a workaround there we can give it what it really wants (fixes offscreen HUD).
-"csqc_lowres 1\n"
-					);
-			break;
 		default:
 			break;
 		}
