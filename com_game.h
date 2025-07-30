@@ -33,7 +33,6 @@ typedef enum gamemode_e
 	GAME_OPENQUARTZ, ///< this game sucks
 	GAME_QUAKE15, ///< added by bones_was_here as it depends on an old bug and a workaround
 	GAME_AD, ///< added by bones_was_here as it depends on old DP behaviour or csqc_lowres
-	GAME_CTSJ2, ///< added by bones_was_here as it has a race condition that requires a workaound
 	GAME_COUNT
 }
 gamemode_t;

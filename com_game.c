@@ -59,7 +59,6 @@ static const gamemode_info_t gamemode_info [GAME_COUNT] =
 { GAME_OPENQUARTZ,				GAME_NORMAL,				"openquartz",			"-openquartz",				"OpenQuartz",				"OpenQuartz",				"id1",		NULL,			"openquartz",		"darkplaces"			}, // COMMANDLINEOPTION: Game: -openquartz runs the game OpenQuartz, a standalone GPL replacement of the quake content
 { GAME_QUAKE15,					GAME_NORMAL,				"quake15",				"-quake15",					"Quake 1.5",				"Quake_1.5",				"id1",		"quake15",		"quake15",			"darkplaces"			}, // COMMANDLINEOPTION: Game: -quake15 runs the Quake 1.5 or Quake Combat+ mod
 { GAME_AD,						GAME_NORMAL,				"ad",					"-ad",						"Arcane Dimensions",		"Arcane_Dimensions",		"id1",		"ad",			"ad",				"darkplaces"			}, // COMMANDLINEOPTION: Game: -ad runs the Arcane Dimensions mod
-{ GAME_CTSJ2,					GAME_NORMAL,				"ctsj2",				"-ctsj2",					"Coppertone Summer Jam 2",	"Coppertone_Summer_Jam_2",	"id1",		"ctsj2",		"ctsj2",			"darkplaces"			}, // COMMANDLINEOPTION: Game: -ctsj2 runs the Coppertone Summer Jam 2 mod
 };
 
 static void COM_SetGameType(int index);
