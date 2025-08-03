@@ -2284,21 +2284,18 @@ static void SVVM_count_edicts(prvm_prog_t *prog)
 static qbool SVVM_load_edict(prvm_prog_t *prog, prvm_edict_t *ent)
 {
 	// remove things from different skill levels or deathmatch
-	if (gamemode != GAME_TRANSFUSION) //Transfusion does this in QC
-	{
-		if (deathmatch.integer)
-		{
-			if (((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_DEATHMATCH))
-			{
-				return false;
-			}
-		}
-		else if ((current_skill <= 0 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_EASY  ))
-			|| (current_skill == 1 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_MEDIUM))
-			|| (current_skill >= 2 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_HARD  )))
-		{
-			return false;
-		}
+  if (deathmatch.integer)
+  {
+    if (((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_DEATHMATCH))
+    {
+      return false;
+    }
+  }
+  else if ((current_skill <= 0 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_EASY  ))
+    || (current_skill == 1 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_MEDIUM))
+    || (current_skill >= 2 && ((int)PRVM_serveredictfloat(ent, spawnflags) & SPAWNFLAG_NOT_HARD  )))
+  {
+    return false;
 	}
 	return true;
 }
