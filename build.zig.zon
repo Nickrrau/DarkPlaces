@@ -7,14 +7,6 @@
             .url = "git+https://github.com/zig-pkg/freetype.git#7d3bb0c7034a086772f974238f6f04b3dcfae781",
             .hash = "freetype-2.13.2-fm5URifJdQBgXli4aGfRLfxol7xAyxMCtpV4nXEtNH2K",
         },
-        .libvorbis = .{
-            .url = "https://github.com/zig-pkg/vorbis/archive/255d460fe9aac3f10e8d95a53cf7acf5f45ad634.tar.gz",
-            .hash = "12209c5a858b0c9527d171fbbcc7194ef132dd489cc558d59aca724b740f7b73c160",
-        },
-        .libogg = .{
-            .url = "https://github.com/zig-pkg/ogg/archive/3aaeedd0824b8f8b2dfa64e1d2866d5b014053e0.tar.gz",
-            .hash = "1220d65fbf188012a7374a3dea472c5ec39cb297a4c0431f49db8e82821c72196a0c",
-        },
         .zlib = .{
             .url = "git+https://github.com/zig-pkg/zlib.git#4a6a80b049871773b987a2490471ea761157e517",
             .hash = "zlib-1.3.1-1-U3Ld-5bBEABwW1ivFfu6RPuiNDyNWAxwernI9UMdkcQI",
@@ -22,6 +14,14 @@
         .SDL2 = .{
             .url = "git+https://github.com/zig-pkg/SDL.git#1d9c2d6fa7851f924cf147288e7f043b1b089f62",
             .hash = "SDL-2.30.0-h5MoXBAlDgFTHzGbzoPzMtk0mURyqwCkFNhTvIJW83d_",
+        },
+        .libvorbis = .{
+            .url = "git+https://github.com/zig-pkg/vorbis.git#255d460fe9aac3f10e8d95a53cf7acf5f45ad634",
+            .hash = "libvorbis-1.3.7-AAAAAJnNJACcWoWLDJUn0XH7vMcZTvEy3UicxVjVmspy",
+        },
+        .libogg = .{
+            .url = "git+https://github.com/zig-pkg/ogg.git#8c9f4cd9ca1b4700947dd87e4bb34b83171808dd",
+            .hash = "libogg-1.3.5-1gFopBA0AgDWX78YgBKnN0o96kcsXsOcspekwEMfSduO",
         },
     },
     .paths = .{
