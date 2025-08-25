@@ -1,11 +1,15 @@
 const std = @import("std");
 const zvar = @import("zvar");
+<<<<<<< dest:   8d6c0be4807d - nickrrau: move code into modules
 const cvar = @import("cvar");
+=======
+const bih = @import("bih");
+// const args = @import("args");
+>>>>>>> source: 83919f13decf - nickrrau: Move cvar implementations into zigva...
 const c = @cImport({
     @cInclude("SDL.h");
     @cInclude("darkplaces.h");
     @cInclude("sys.h");
-    @cInclude("cvar.h");
 });
 
 pub const qbool = bool;
@@ -24,7 +28,7 @@ pub const sys_t = extern struct {
 };
 pub extern var sys: sys_t;
 
-pub export var zig: cvar.cvar_t = .{
+pub export var zig: zvar.cvar_t = .{
     .flags = c.CF_SHARED,
     .name = "zig",
     .string = "0",
@@ -36,13 +40,12 @@ pub export fn testZig() void {
     c.Cvar_RegisterVariable(t);
 }
 
-pub var ZigCVARRegistry: *zvar.CVARRegistry(cvar.cvar_t) = undefined;
 
-pub export fn Zig_RegisterVariable(variable: [*c]cvar.cvar_t) callconv(.C) void {
-    ZigCVARRegistry.register(variable);
+pub export fn Zig_RegisterVariable(variable: [*c]zvar.cvar_t) callconv(.C) void {
+    zvar.global_registry.register(variable);
 }
 
-pub fn main() void {
+pub fn main() !void {
     std.debug.print("Entered Main\n", .{});
     const argv = std.os.argv;
     const argc: c_int = @intCast(argv.len);
@@ -50,12 +53,18 @@ pub fn main() void {
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const alloc = gpa.allocator();
+
+    // var args_arena = std.heap.ArenaAllocator.init(alloc);
+    // defer args_arena.deinit();
+    // const parsed_args = try args.init(args_arena.allocator()); 
+    // _ = parsed_args;
+
     var cvar_arena = std.heap.ArenaAllocator.init(alloc);
     defer cvar_arena.deinit();
 
-    var registry = zvar.CVARRegistry(cvar.cvar_t).init(cvar_arena.allocator());
+    var registry = zvar.CVARRegistry(zvar.cvar_t).init(cvar_arena.allocator());
     defer registry.deinit();
-    ZigCVARRegistry = &registry;
+    zvar.global_registry = &registry;
 
     _ = c.Sys_Main(argc, c_ptr);
     std.debug.print("{?}\n", .{registry.registry.get("zig").?.integer});
@@ -88,3 +97,4 @@ pub export fn Sys_SDL_Dialog(title: [*c]const u8, string: [*c]const u8) void {
         _ = c.SDL_ShowSimpleMessageBox(c.SDL_MESSAGEBOX_ERROR, title, string, null);
     }
 }
+

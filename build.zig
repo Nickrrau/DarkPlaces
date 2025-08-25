@@ -217,14 +217,12 @@ const common_static_libs = [_]struct {
         .c = true,
     },
     .{
-        .name = "cvar",
-        .root_source_file = "cvar.zig",
+        .name = "zvar",
+        .root_source_file = "zigvar.zig",
         .bundle_compiler_rt = true,
         .c = false,
     },
     .{
-        .name = "zvar",
-        .root_source_file = "zigvar.zig",
         .bundle_compiler_rt = true,
         .c = false,
     },
