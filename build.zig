@@ -222,10 +222,6 @@ const common_static_libs = [_]struct {
         .bundle_compiler_rt = true,
         .c = false,
     },
-    .{
-        .bundle_compiler_rt = true,
-        .c = false,
-    },
 };
 const cl_static_libs = []std.Build.StaticLibraryOptions{};
 const sv_static_libs = []std.Build.StaticLibraryOptions{};

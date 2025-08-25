@@ -1,11 +1,7 @@
 const std = @import("std");
 const zvar = @import("zvar");
-<<<<<<< dest:   8d6c0be4807d - nickrrau: move code into modules
 const cvar = @import("cvar");
-=======
-const bih = @import("bih");
 // const args = @import("args");
->>>>>>> source: 83919f13decf - nickrrau: Move cvar implementations into zigva...
 const c = @cImport({
     @cInclude("SDL.h");
     @cInclude("darkplaces.h");
